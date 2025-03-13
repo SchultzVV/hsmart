@@ -1,0 +1,31 @@
+FROM python:3.9
+
+WORKDIR /app
+
+COPY requirements.txt .
+
+RUN pip install torch==2.0.1 --index-url https://download.pytorch.org/whl/cu118
+RUN pip install torchvision==0.15.2 torchaudio==2.0.2 --index-url https://download.pytorch.org/whl/cu118
+# Agora instala o restante das dependências
+RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir huggingface_hub
+
+# Fazer login na Hugging Face automaticamente
+ARG HUGGINGFACE_TOKEN
+ENV HUGGINGFACE_TOKEN=$HUGGINGFACE_TOKEN
+
+# RUN echo "${HUGGINGFACE_TOKEN}"
+# RUN echo "HUGGINGFACE_TOKEN está definido como: $HUGGINGFACE_TOKEN"
+
+# RUN huggingface-cli login --token $HUGGINGFACE_TOKEN --add-to-git-credential
+
+
+# RUN huggingface-cli login --token $HUGGINGFACE_TOKEN
+# RUN --mount=type=secret,id=huggingface_token
+RUN echo "$HUGGINGFACE_TOKEN" | huggingface-cli login --token && \
+    rm -rf ~/.cache/huggingface
+# RUN huggingface-cli login --token "$(cat /run/secrets/huggingface_token)"
+
+COPY . .
+
+CMD ["python", "main.py"]
