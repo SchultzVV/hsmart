@@ -70,21 +70,21 @@ def generate_answer(question, context):
 
     ### **Contexto**:
     {context}"""
-
+    # gerando resultado aceitável
     response = generator(
         prompt,
         max_length=194,  # 🔹 Reduzi um pouco para evitar cortes no meio da resposta
         min_length=50,  # 🔹 Mantém respostas bem estruturadas
         truncation=True,
-        temperature=0.5,  # 🔹 Mantém equilíbrio entre precisão e criatividade
+        temperature=0.3,  # 🔹 Mantém equilíbrio entre precisão e criatividade
         top_k=50,  # 🔹 Evita palavras irrelevantes
         top_p=0.85,  # 🔹 Mantém coerência na geração
-        repetition_penalty=1.2,  # 🔹 Evita repetições excessivas
+        repetition_penalty=1.15,  # 🔹 Evita repetições excessivas
     )[0]["generated_text"]
 
     response = clean_response(response)  # 🔹 Aplica limpeza pós-processamento
-
-    print("\n🤖 Resposta gerada:", response)
+    formatted_response = response.encode("utf-8").decode("utf-8")
+    print("\n🤖 Resposta gerada:", formatted_response)
     return response
 
 @app.route('/query', methods=['POST'])
@@ -97,6 +97,9 @@ def query():
 
     # Gera resposta usando FLAN-T5-SMALL
     response = generate_answer(question, context)
+    
+    # formatted_response = response.encode("utf-8").decode("utf-8")
+
 
     return jsonify({"response": response}), 200
 
