@@ -3,3 +3,4 @@ services/retrieval_service/.env
 /olds
 huggingface_token.txt
 tests/__pycache__/
+/vector_db

@@ -39,7 +39,9 @@ def retrieve_context(question):
     results = client.search(
         collection_name=COLLECTION_NAME,
         query_vector=question_embedding,
-        limit=3
+        limit=2,
+        score_threshold=0.55  # 🔹 Impedimos que contextos irrelevantes entrem
+
     )
 
     if results:
@@ -74,12 +76,12 @@ def generate_answer(question, context):
     response = generator(
         prompt,
         max_length=194,  # 🔹 Reduzi um pouco para evitar cortes no meio da resposta
-        min_length=50,  # 🔹 Mantém respostas bem estruturadas
+        min_length=80,  # 🔹 Mantém respostas bem estruturadas
         truncation=True,
-        temperature=0.3,  # 🔹 Mantém equilíbrio entre precisão e criatividade
+        temperature=0.2,  # 🔹 Mantém equilíbrio entre precisão e criatividade
         top_k=50,  # 🔹 Evita palavras irrelevantes
         top_p=0.85,  # 🔹 Mantém coerência na geração
-        repetition_penalty=1.15,  # 🔹 Evita repetições excessivas
+        repetition_penalty=2.0,  # 🔹 Evita repetições excessivas
     )[0]["generated_text"]
 
     response = clean_response(response)  # 🔹 Aplica limpeza pós-processamento

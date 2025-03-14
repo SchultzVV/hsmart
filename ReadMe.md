@@ -65,15 +65,15 @@ O arquivo `.env` deve estar na pasta raiz do projeto com o seguinte conteúdo:
 ```bash
 docker-compose up --build
 ```
-
-## 🧪 **3️⃣ Como Rodar os Testes**
+Após concluir o passo 3 está pronto apra uso. A resposta para a pergunta do PDF foi gerada pelo endpoint e encontra-se no [`ultima_resposta.txt`](services/retrieval_service/ultima_resposta.txt). Para mais detalhes veja o [`README_de_resposta.md`](README_de_resposta.md)
+## 🧪 Como Rodar os Testes
 Para garantir que os serviços estão funcionando corretamente, você pode rodar os testes automatizados.
 
-#### **1️⃣ Instale o `pytest` (se ainda não estiver instalado)**
+#### Instale o `pytest` (se ainda não estiver instalado)
 ```bash
 pip install pytest
 ```
-#### **2️⃣ Realize os testes automáticos**
+#### Realize os testes automáticos
 Rode o comando abaixo na pasta raiz do projeto
 ```bash
 pytest tests/
@@ -90,9 +90,9 @@ tests/test_retrieval.py ✅ PASSED
 
 ###### ** OBS: Se quiser ver os logs das imagens use os comandos**
 ```bash
-docker logs ingestion_service --tail 50
+docker logs ingestion_service --follow
 ```
 ou
 ```bash
-docker logs retrieval_service --tail 50
+docker logs retrieval_service --follow
 ```
