@@ -22,7 +22,7 @@ A resposta também é salva num arquivo [`ultima_resposta.txt`](services/retriev
 
 
 ##### Ingestion_service  
-A imagem de ingestão de informações no banco de vetores qdrant faz automaticamente a coleta, ingestão e incorporação das informações. Porém o endpoint de ingestão, porém pode ser usado assim: 
+A imagem de ingestão de informações no banco de vetores qdrant faz automaticamente a coleta, ingestão e incorporação das informações. O endpoint de ingestão, porém pode ser usado assim: 
 
 ```bash
 curl -X POST "http://127.0.0.1:5003/ingest" \
