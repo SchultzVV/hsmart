@@ -99,7 +99,9 @@ def query():
     response = generate_answer(question, context)
     
     # formatted_response = response.encode("utf-8").decode("utf-8")
-
+    # 🔹 Salva a resposta em um arquivo .txt
+    with open("ultima_resposta.txt", "w", encoding="utf-8") as file:
+        file.write(f"Pergunta: {question}\n\nResposta:\n{response}")
 
     return jsonify({"response": response}), 200
 
