@@ -4,3 +4,4 @@ beautifulsoup4
 chromadb
 sentence-transformers
 qdrant-client
+pytest

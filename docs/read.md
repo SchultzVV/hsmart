@@ -22,3 +22,5 @@ Plano de Execução (3 Dias)
 *   Criar o README.md com instruções de execução.
 *   Subir o código para o GitHub e validar a execução com docker-compose up.
 *   Se precisar de ajuda com alguma parte específica, posso te guiar na implementação! 🚀
+
+echo "TOKEN_GITHUB" | docker login ghcr.io -u SEU_USUARIO --password-stdin

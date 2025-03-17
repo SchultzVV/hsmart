@@ -4,3 +4,4 @@ chromadb
 sentence-transformers
 torch
 qdrant-client
+pytest
