@@ -65,3 +65,30 @@ Embora o sistema esteja funcional e operacional, há algumas otimizações que p
 - Integrar uma API externa para complementar o conhecimento armazenado, garantindo que informações atualizadas possam ser incorporadas automaticamente.
 
 Essas melhorias podem tornar o sistema mais inteligente, eficiente e adaptável, garantindo respostas mais precisas e relevantes para diferentes tipos de perguntas.
+
+
+
+
+## Endpoints
+
+```bash
+curl -X GET http://localhost:5003/get_all_documents
+```
+```bash
+curl -X POST http://localhost:5003/ingest_hotmart
+
+```
+```bash
+curl -X POST http://localhost:5003/ingest_manual -H "Content-Type: application/json" -d '{"text": "MLOps é essencial para ML em produção."}'
+
+```
+```bash
+curl -X POST http://localhost:5004/query -H "Content-Type: application/json" -d '{"question": "MLOps é essencial para?"}'
+
+```
+```bash
+
+```
+```bash
+
+```

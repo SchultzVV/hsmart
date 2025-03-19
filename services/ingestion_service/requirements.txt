@@ -5,3 +5,6 @@ chromadb
 sentence-transformers
 qdrant-client
 pytest
+flake8
+black
+pytest-cov

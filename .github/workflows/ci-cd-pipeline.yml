@@ -7,7 +7,7 @@ on:
   pull_request:
 
 jobs:
-  build-and-test:
+  lint-and-test:
     runs-on: ubuntu-latest
     env:
       HUGGINGFACE_TOKEN: ${{ secrets.HUGGINGFACE_TOKEN }}
@@ -16,21 +16,44 @@ jobs:
       - name: Checkout Código
         uses: actions/checkout@v3
 
+      - name: Instalar Dependências
+        run: |
+          pip install flake8 black pytest pytest-cov requests
+
+      - name: Rodar Linter (flake8)
+        run: flake8 services/
+
+      - name: Rodar Formatter (black)
+        run: black --check services/
+
+      - name: Rodar Testes Unitários
+        run: pytest tests/ --disable-warnings
+
+      - name: Subir Containers para Testes de Integração
+        run: docker-compose -f docker-compose.dev.yaml up -d
+
+      - name: Rodar Testes de Integração
+        run: pytest tests/test_integration.py --disable-warnings
+
+      - name: Parar Containers Após Testes
+        run: docker-compose -f docker-compose.dev.yaml down
+
+
+  build-and-push:
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+    if: success()
+
+    steps:
+      - name: Checkout Código
+        uses: actions/checkout@v3
+
       - name: Login no GHCR
         run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
 
-      - name: Criar Imagens do Docker Compose
-        run: docker-compose build --build-arg HUGGINGFACE_TOKEN=${{ secrets.HUGGINGFACE_TOKEN }}
-
-      - name: Rodar Containers
-        run: docker-compose up -d && sleep 10
-
-      - name: Rodar Testes
-        run: docker exec ingestion_service pytest tests/
-
-      - name: Tag e Push das Imagens
+      - name: Build e Push das Imagens
         run: |
-          docker tag ingestion_service ghcr.io/${{ secrets.GHCR_USERNAME }}/ingestion_service:latest
-          docker tag retrieval_service ghcr.io/${{ secrets.GHCR_USERNAME }}/retrieval_service:latest
-          docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/ingestion_service:latest
-          docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/retrieval_service:latest
+          docker build -t ghcr.io/${{ secrets.GHCR_USERNAME }}/hsmart-ingestion_service:latest ./services/ingestion_service
+          docker build -t ghcr.io/${{ secrets.GHCR_USERNAME }}/hsmart-retrieval_service:latest ./services/retrieval_service
+          docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/hsmart-ingestion_service:latest
+          docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/hsmart-retrieval_service:latest

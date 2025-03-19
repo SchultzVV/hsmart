@@ -4,3 +4,4 @@ services/retrieval_service/.env
 huggingface_token.txt
 tests/__pycache__/
 /vector_db
+ReadMe.md
