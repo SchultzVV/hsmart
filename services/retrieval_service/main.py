@@ -53,6 +53,30 @@ generator = pipeline(
 logging.info("\n✅ Pipeline de geração de texto carregado!")
 
 
+# def retrieve_context(question):
+#     """Busca os trechos mais relevantes no banco vetorial"""
+#     question_embedding = embedding_model.encode(question).tolist()
+#     logging.info(f"\n🔍 Consulta ao Qdrant para a pergunta: {question}")
+
+#     results = client.search(
+#         collection_name=COLLECTION_NAME,
+#         query_vector=question_embedding,
+#         limit=5  # Ajustado para buscar mais opções e filtrar
+#     )
+
+#     if results:
+#         # Filtrar respostas muito curtas ou irrelevantes
+#         context_candidates = [hit.payload["text"] for hit in results if len(hit.payload["text"]) > 20]
+
+#         if not context_candidates:
+#             context = "Não há informações disponíveis sobre esse assunto."
+#         else:
+#             context = " ".join(context_candidates[:3])  # Pegamos no máximo 3 trechos
+#     else:
+#         context = "Não há informações disponíveis sobre esse assunto."
+
+#     logging.info(f"\n✅ Contexto recuperado: {context}")
+#     return context
 def retrieve_context(question):
     """Busca os trechos mais relevantes no banco vetorial"""
     question_embedding = embedding_model.encode(question).tolist()
@@ -61,23 +85,18 @@ def retrieve_context(question):
     results = client.search(
         collection_name=COLLECTION_NAME,
         query_vector=question_embedding,
-        limit=5  # Ajustado para buscar mais opções e filtrar
+        limit=5
     )
 
-    if results:
-        # Filtrar respostas muito curtas ou irrelevantes
-        context_candidates = [hit.payload["text"] for hit in results if len(hit.payload["text"]) > 20]
+    logging.info(f"\n🔹 Resultados retornados pelo Qdrant: {results}")
 
-        if not context_candidates:
-            context = "Não há informações disponíveis sobre esse assunto."
-        else:
-            context = " ".join(context_candidates[:3])  # Pegamos no máximo 3 trechos
+    if results:
+        context = " ".join([hit.payload["text"] for hit in results])
     else:
         context = "Não há informações disponíveis sobre esse assunto."
 
     logging.info(f"\n✅ Contexto recuperado: {context}")
     return context
-
 
 def generate_answer(question, context):
     """Gera uma resposta coerente baseada no contexto relevante"""
@@ -85,30 +104,30 @@ def generate_answer(question, context):
         return "Não sei a resposta."
 
     prompt = f"""
-    Responda à seguinte pergunta com base no contexto fornecido.
-    Responda **somente em português** e de forma clara e objetiva.
+    Baseando-se apenas no contexto abaixo, responda de forma clara e objetiva.
 
     🔹 **Pergunta:** {question}
 
     🔹 **Contexto:** {context}
 
-    🔹 **Resposta:** (não use informações fora do contexto fornecido)
+    🔹 **Resposta:** 
     """
 
     response = generator(
         prompt,
-        max_length=150,  
-        min_length=40,  
+        max_length=100,  # Reduzindo para evitar respostas longas demais
+        min_length=30,  # Mantendo um mínimo para evitar respostas curtas demais
         truncation=True,
-        do_sample=False,  # Mudamos para evitar respostas aleatórias
-        temperature=0.1,  # Reduzimos para tornar as respostas mais exatas
-        top_k=30,  
-        top_p=0.85,  
+        do_sample=True,  # Mantemos deterministicamente
+        temperature=0.2,  # Reduzido para maior precisão
+        top_k=40,  
+        top_p=0.8,  
         repetition_penalty=1.3,  
     )[0]["generated_text"]
 
     logging.info(f"\n🤖 Resposta gerada: {response}")
     return response
+
 
 
 @app.route('/fine_tune', methods=['POST'])
