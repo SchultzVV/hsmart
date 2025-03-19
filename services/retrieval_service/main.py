@@ -88,7 +88,7 @@ def generate_answer(question, context):
     # Melhorando o prompt para garantir respostas mais precisas e em português
     prompt = f"""
     Responda à seguinte pergunta com base no contexto fornecido. 
-    A resposta deve ser objetiva e 100% em português.
+    Responda **apenas em português** de forma objetiva.
 
     🔹 **Pergunta:** {question}
 
@@ -103,7 +103,7 @@ def generate_answer(question, context):
         min_length=40,  # Evita respostas curtas e genéricas
         truncation=True,
         do_sample=True,  # Gera variações na resposta
-        temperature=0.3,  # Menos aleatoriedade para mais precisão
+        temperature=0.5,  # Menos aleatoriedade para mais precisão
         top_k=40,  
         top_p=0.85,  
         repetition_penalty=1.2,  
