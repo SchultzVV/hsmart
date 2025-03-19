@@ -13,12 +13,7 @@ RUN pip install --no-cache-dir huggingface_hub
 ARG HUGGINGFACE_TOKEN
 ENV HUGGINGFACE_TOKEN=$HUGGINGFACE_TOKEN
 
-# Debug: Exibir o token (remova depois de testar)
-RUN echo "Token recebido no Dockerfile: $HUGGINGFACE_TOKEN"
-
-# Fazer login corretamente na Hugging Face
-RUN huggingface-cli login --token "$HUGGINGFACE_TOKEN" --add-to-git-credential
-
 COPY . .
 
-CMD ["python", "main.py"]
+# Fazer login na Hugging Face no runtime, não no build
+CMD huggingface-cli login --token "$HUGGINGFACE_TOKEN" --add-to-git-credential && python main.py

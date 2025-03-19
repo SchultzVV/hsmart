@@ -4,6 +4,9 @@ from transformers import pipeline
 from sentence_transformers import SentenceTransformer
 import torch
 import re
+import os
+
+DEBUG_MODE = os.getenv("DEBUG", "False").lower() == "true"
 
 # Inicializando Flask
 app = Flask(__name__)
@@ -108,4 +111,5 @@ def query():
     return jsonify({"response": response}), 200
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5004, debug=True)
+    app.run(host='0.0.0.0', port=5004, debug=DEBUG_MODE)
+    # app.run(host='0.0.0.0', port=5004, debug=False)

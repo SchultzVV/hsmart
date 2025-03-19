@@ -9,23 +9,28 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    env:
+      HUGGINGFACE_TOKEN: ${{ secrets.HUGGINGFACE_TOKEN }}
+
     steps:
       - name: Checkout Código
         uses: actions/checkout@v3
 
-      - name: Configurar Docker
-        run: |
-          docker-compose up -d
-          sleep 10  # Aguarda os serviços subirem
+      - name: Login no GHCR
+        run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
+
+      - name: Criar Imagens do Docker Compose
+        run: docker-compose build --build-arg HUGGINGFACE_TOKEN=${{ secrets.HUGGINGFACE_TOKEN }}
+
+      - name: Rodar Containers
+        run: docker-compose up -d && sleep 10
 
       - name: Rodar Testes
         run: docker exec ingestion_service pytest tests/
 
-      - name: Build da Imagem
-        run: docker build -t usuario_docker/nome_da_imagem:latest .
-
-      - name: Push da Imagem
-        if: success()
+      - name: Tag e Push das Imagens
         run: |
-          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-          docker push usuario_docker/nome_da_imagem:latest
+          docker tag ingestion_service ghcr.io/${{ secrets.GHCR_USERNAME }}/ingestion_service:latest
+          docker tag retrieval_service ghcr.io/${{ secrets.GHCR_USERNAME }}/retrieval_service:latest
+          docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/ingestion_service:latest
+          docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/retrieval_service:latest

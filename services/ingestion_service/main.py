@@ -3,6 +3,9 @@ import requests
 from bs4 import BeautifulSoup
 from sentence_transformers import SentenceTransformer
 from flask import Flask, jsonify
+import os
+
+DEBUG_MODE = os.getenv("DEBUG", "False").lower() == "true"
 
 # Inicializando Flask
 app = Flask(__name__)
@@ -79,4 +82,5 @@ if __name__ == '__main__':
     else:
         print("Erro ao baixar o texto da página.")
 
-    app.run(host='0.0.0.0', port=5003)
+    # app.run(host='0.0.0.0', port=5003)
+    app.run(host='0.0.0.0', port=5003, debug=DEBUG_MODE)
