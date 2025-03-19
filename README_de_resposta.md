@@ -87,7 +87,9 @@ curl -X POST http://localhost:5004/query -H "Content-Type: application/json" -d 
 
 ```
 ```bash
-
+curl -X POST "http://127.0.0.1:5004/query" \
+     -H "Content-Type: application/json" \
+     -d '{"question": "O que é a Hotmart?"}'
 ```
 ```bash
 

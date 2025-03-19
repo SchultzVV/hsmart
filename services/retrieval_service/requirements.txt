@@ -5,3 +5,5 @@ sentence-transformers
 torch
 qdrant-client
 pytest
+datasets
+sentencepiece
