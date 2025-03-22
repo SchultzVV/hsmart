@@ -1,14 +1,6 @@
-# version: "3.8"
+version: "3.8"
 
 services:
-  # vector_db:
-  #   image: chromadb/chroma
-  #   container_name: vector_db
-  #   ports:
-  #     - "8000:8000"
-  #   volumes:
-  #     - ./vector_db:/app
-  #   restart: always
   vector_db:
     image: qdrant/qdrant
     container_name: vector_db
@@ -20,6 +12,7 @@ services:
 
   ingestion_service:
     build: ./services/ingestion_service
+    image: ghcr.io/schultzvv/ingestion_service:latest
     container_name: ingestion_service
     ports:
       - "5003:5003"
@@ -28,13 +21,16 @@ services:
     volumes:
       - ./services/ingestion_service:/app
     restart: always
+    environment:
+      - DEBUG=True
 
   retrieval_service:
     build:
       context: ./services/retrieval_service
       args:
         HUGGINGFACE_TOKEN: ${HUGGINGFACE_TOKEN}
-    container_name: ghcr.io/schultzvv/retrieval_service
+    image: ghcr.io/schultzvv/retrieval_service:latest
+    container_name: retrieval_service
     ports:
       - "5004:5004"
     depends_on:
@@ -44,3 +40,5 @@ services:
     restart: always
     env_file:
       - .env
+    environment:
+      - DEBUG=True
