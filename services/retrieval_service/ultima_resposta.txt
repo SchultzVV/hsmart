@@ -1,4 +1,8 @@
-Pergunta: O que é a Hotmart?
+Pergunta: a hotmart foi fundada quando?
 
-Resposta:
-A Hotmart é um ecossistema completo e in constante evolucionizao para trazer ainda mais soluçes para criar e escalar negócios digital. Dados mostram que, na Hotmart, creators faturam 35% mais, sem mexer no esforço operacional. Isso graças ao rápid carregamento, alta taxa de aprovaço, variedade de formas de pagamento, usabilidade agradável e
+Contexto utilizado:
+Em 2011, a Hotmart foi fudada!
+A maior missão é possibilitar que todos possam viver de suas paixões, compartilhando conhecimento e ajudando no crescimento profissional e pessoal de outras pessoas
+
+Resposta gerada:
+2011.

@@ -68,11 +68,54 @@ def ingest_hotmart():
 @app.route('/ingest_manual', methods=['POST'])
 def ingest_manual():
     data = request.get_json()
+
     if not data or "text" not in data:
         return jsonify({"error": "O campo 'text' é obrigatório"}), 400
 
-    store_text_in_vector_db(data["text"], "mlops_knowledge")
-    return jsonify({"message": "Texto manual processado com sucesso"}), 200
+    text = data["text"]
+    collection = data.get("collection", "mlops_knowledge")  # padrão: mlops_knowledge
+
+    try:
+        store_text_in_vector_db(text, collection)
+        return jsonify({
+            "message": f"Texto manual processado com sucesso na coleção `{collection}`"
+        }), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/delete_collection', methods=['POST'])
+def delete_collection():
+    """
+    Deleta uma coleção inteira do Qdrant (exclui todos os documentos)
+    Requer o campo: {"collection": "nome_da_colecao"}
+    """
+    data = request.get_json()
+
+    if not data or "collection" not in data:
+        return jsonify({"error": "O campo 'collection' é obrigatório"}), 400
+
+    collection_name = data["collection"]
+
+    try:
+        if client.collection_exists(collection_name):
+            client.delete_collection(collection_name=collection_name)
+            return jsonify({"message": f"Coleção `{collection_name}` deletada com sucesso."}), 200
+        else:
+            return jsonify({"error": f"A coleção `{collection_name}` não existe."}), 404
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+# @app.route('/ingest_manual', methods=['POST'])
+# def ingest_manual():
+#     data = request.get_json()
+#     if not data or "text" not in data:
+#         return jsonify({"error": "O campo 'text' é obrigatório"}), 400
+
+#     store_text_in_vector_db(data["text"], "mlops_knowledge")
+#     return jsonify({"message": "Texto manual processado com sucesso"}), 200
 
 
 @app.route('/get_all_collections', methods=['GET'])

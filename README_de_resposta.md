@@ -1,96 +1,113 @@
-## RESPOSTA 
-Após construir os serviços de ingestão e resposta, podemos obter o resultado pedido no PDF com o endpoint:
+## Construção dos serviços
 
-##### Usando o Retrivial_service
+Para construir os serviços de ingestão e resposta rode na pasta raiz do projeto:
 ```bash
-curl -X POST "http://127.0.0.1:5004/query" \
-     -H "Content-Type: application/json" \
-     -d '{"question": "O que é a Hotmart?"}'
+docker-compose up --build
 ```
-Deve receber uma resposta JSON:
-```json
-{
-  "response": ": A Hotmart \u00e9 um ecossistema completo em constante evolucion\u00e1ria para trazer ainda mais solu\u00e7es para criar e escalar neg\u00f3cios digital. Dados mostram que, na Hotmart, creators faturam 35% mais, sem mexer no esfor\u00e7o operacional. Isso gra\u00e7as ao rapid carregamento, alta taxa de aprova\u00e7o, variedade de formas de pagamento, usabilidade agrad\u00e1vel e ferramentas especficas para aumentar as vendas, como o Order Bump & Funil de Vendas, por exemplo."
-}
-```
-A resposta ajustada é 
-```text
-Resposta:
-A Hotmart é um ecossistema completo em constante evolucionária para trazer ainda mais soluçes para criar e escalar negócios digital. Dados mostram que, na Hotmart, creators faturam 35% mais, sem mexer no esforço operacional. Isso graças ao rapid carregamento, alta taxa de aprovaço, variedade de formas de pagamento, usabilidade agradável e ferramentas especficas para aumentar as vendas, como o Order Bump & Funil de Vendas, por exemplo.
-```
-A resposta também é salva num arquivo [`ultima_resposta.txt`](services/retrieval_service/ultima_resposta.txt)
 
+## Endpoints
+Teste os endpoints são apresentados em duas etapas, a primeira (1)  é uma ingestão manual e depois uma pergunta sobre o contexto de MLOPS. Depois em (2) é apresentada a ingestão automatica do site hotmart seguida de duas perguntas sobre o contexto hotmart. Por último são mostrados endpoins para deletar coleções.
 
-##### Ingestion_service  
-A imagem de ingestão de informações no banco de vetores qdrant faz automaticamente a coleta, ingestão e incorporação das informações. O endpoint de ingestão pode ser usado assim: 
+### **1 - Ingestion_service Manual**
+A imagem de ingestão de informações no banco de vetores `qdrant` faz automaticamente a coleta, ingestão e incorporação das informações. O endpoint de ingestão pode ser usado assim: 
 
+*    Endpoint para ingestão manual pode ser feito especificando uma coleção ou não, caso queira especificar a coleção use conforme abaixo
 ```bash
-curl -X POST "http://127.0.0.1:5003/ingest" \
+curl -X POST http://127.0.0.1:5003/ingest_manual \
      -H "Content-Type: application/json" \
-     -d '{"text": "A Hotmart é uma plataforma para criadores de conteúdo venderem seus produtos digitais."}'
+     -d '{"text": "MLOps é a combinação de ML com DevOps para escalar modelos em produção.", "collection": "mlops_knowledge"}'
 ```
 Deve receber uma resposta JSON:
 ```json
 {"message": "Texto armazenado com sucesso"}
 ```
+*    Endpoint para listar os documentos
+     ```bash
+     curl -X GET http://localhost:5003/get_all_documents
+     ```
+### **1 - Retrieval_service**
 
+```bash
+     curl -X POST http://localhost:5004/query -H      "Content-Type:  application/json" -d '{"question": "o que é mlops?"}'  
+```
+A última resposta será salva num arquivo [`ultima_resposta.txt`](services/retrieval_service/ultima_resposta.txt)
+ e será algo do tipo:
+```text
+Pergunta: o que é mlops?
+
+Contexto utilizado:
+MLOps é a combinação de ML com DevOps para escalar modelos em produção.
+
+Resposta gerada:
+MLOps é a combinaço de ML com DevOps para escalar modelos em produço.
+```
+
+
+### **2 - Ingestão do site hotmart**
+*    Endpoint para ingerir os dados do site hotmart
+
+```bash
+curl -X POST http://localhost:5003/ingest_hotmart
+```
+
+### **2 - Retrieval_service do site hotmart**
+```bash
+curl -X POST "http://127.0.0.1:5004/query" \
+     -H "Content-Type: application/json" \
+     -d '{"question": "O que é a Hotmart?"}'
+```
+```text
+Pergunta: O que é a Hotmart?
+
+Contexto utilizado:
+A Hotmart é um ecossistema completo e em constante evolução para trazer ainda mais soluções para criar e escalar negócios digitais.
+Dados mostram que, na Hotmart, creators faturam 35% mais, sem mexer no esforço operacional.
+Isso graças ao rápido carregamento, alta taxa de aprovação, variedade de formas de pagamento, usabilidade agradável e ferramentas específicas para aumentar as vendas, como o Order Bump e Funil de Vendas, por exemplo.
+VÍDEO: Como funciona a Hotmart? Tudo que você precisa saber para vender na Hotmart!
+
+O cadastro e o uso da Hotmart são gratuitos Uma das empresas da Hotmart Company, que conta com integração com a Hotmart é a eNotas, que realiza exatamente este serviço.
+Você pode contratar pela própria Hotmart e ter a garantia de que todas as Notas Fiscais estão sendo emitidas corretamente e otimizar o seu tempo, focando no crescimento do seu negócio online.
+Ficamos felizes que você tenha tomado a decisão de conhecer os cursos disponíveis no universo da Hotmart ou de se tornar um Produtor ou Afiliado No ecossistema, a grande diferença é que tem mais serviços em torno de um serviço ou de um público inicial, vamos dizer assim”, revelou João Pedro Resende, CEO e co-fundador da Hotmart.
+A Hotmart ainda oferece ferramentas e soluções que ajudam na hospedagem, divulgação e venda de produtos digitais E acho que todo criador de conteúdo que decidir construir disso um negócio pra vida dele, ele vai olhar pra Hotmart como um grande parceiro pra ajudar com muitas coisas
+
+Resposta gerada:
+A Hotmart é um ecossistema completo e in constante evoluciono para trazer ainda mais soluçes para criar e escalar negócios digital.
+```
+*    Uma outra pergunta poderia ser:
+```bash
+curl -X POST "http://127.0.0.1:5004/query" \               
+     -H "Content-Type: application/json" \
+     -d '{"question": "a hotmart foi fundada quando?"}'
+```
+O que tem como resposta:
+```text
+Pergunta: a hotmart foi fundada quando?
+
+Contexto utilizado:
+Em 2011, a Hotmart foi fudada!
+A maior missão é possibilitar que todos possam viver de suas paixões, compartilhando conhecimento e ajudando no crescimento profissional e pessoal de outras pessoas
+
+Resposta gerada:
+2011.
+
+```
+
+### Endpoints auxiliares
+
+#### Deletar coleções
+```bash
+curl -X POST http://127.0.0.1:5003/delete_collection \
+     -H "Content-Type: application/json" \
+     -d '{"collection": "hotmart_knowledge"}'
+```
+
+#### listar documentos
+```bash
+curl -X GET http://localhost:5003/get_all_documents
+```
 
 ### Considerações
 
 Durante a implementação do `retrieval_service`, optei por não utilizar a GPU e executei os modelos exclusivamente na CPU. A decisão foi baseada na configuração da máquina utilizada, que possui uma CPU com 16GB de RAM e uma GPU mais antiga, o que poderia comprometer a estabilidade e compatibilidade do processamento. Para garantir melhor desempenho na inferência do modelo, selecionei o google/flan-t5-small, uma opção otimizada para execução em CPU.
 
 Podemos considerar o teste das melhorias futuras.
-
-#### 📜 Possíveis Melhorias Futuras
-
-Embora o sistema esteja funcional e operacional, há algumas otimizações que podem aprimorar a precisão das respostas e a eficiência do modelo:
-
-##### **1️⃣ Melhoria na Geração das Respostas**
-- Testar modelos mais robustos, como **`google/flan-t5-base`** ou **`tiiuae/falcon-7b-instruct`**, caso haja mais recursos computacionais disponíveis.
-
-- Refinar o **pós-processamento das respostas**, eliminando padrões degenerativos e garantindo maior fluidez na linguagem.
-
-##### **2️⃣ Otimização da Recuperação de Contexto**
-- Ajustar a **quantidade de trechos retornados do Qdrant** para fornecer mais informações ao modelo na hora de gerar respostas.
-
-- Implementar **re-ranking dos resultados**, priorizando os trechos mais relevantes para cada pergunta.
-
-- Testar o uso de embeddings mais avançados para melhorar a qualidade da busca semântica.
-
-##### **4️⃣ Expansão da Base de Conhecimento**
-- Criar um endpoint para **ingestão contínua de novos documentos**, permitindo a atualização da base de conhecimento sem necessidade de reinicialização.
-
-- Habilitar um **mecanismo de feedback**, onde os usuários possam avaliar as respostas geradas, permitindo que o sistema aprenda e melhore continuamente.
-
-- Integrar uma API externa para complementar o conhecimento armazenado, garantindo que informações atualizadas possam ser incorporadas automaticamente.
-
-Essas melhorias podem tornar o sistema mais inteligente, eficiente e adaptável, garantindo respostas mais precisas e relevantes para diferentes tipos de perguntas.
-
-
-
-
-## Endpoints
-
-```bash
-curl -X GET http://localhost:5003/get_all_documents
-```
-```bash
-curl -X POST http://localhost:5003/ingest_hotmart
-
-```
-```bash
-curl -X POST http://localhost:5003/ingest_manual -H "Content-Type: application/json" -d '{"text": "MLOps é essencial para ML em produção."}'
-
-```
-```bash
-curl -X POST http://localhost:5004/query -H "Content-Type: application/json" -d '{"question": "MLOps é essencial para?"}'
-
-```
-```bash
-curl -X POST "http://127.0.0.1:5004/query" \
-     -H "Content-Type: application/json" \
-     -d '{"question": "O que é a Hotmart?"}'
-```
-```bash
-
-```

@@ -47,20 +47,35 @@ logging.info("\n✅ Pipeline de geração de texto carregado!")
 
 
 def retrieve_context(question):
-    """Decide coleção e aplica filtro de score >= 0.7"""
-    collection = "mlops_knowledge" if "mlops" in question.lower() else "hotmart_knowledge"
+    """Busca os trechos mais relevantes no Qdrant e ajusta dinamicamente o filtro de score"""
+    if "mlops" in question.lower():
+        collection_name = "mlops_knowledge"
+    else:
+        collection_name = "hotmart_knowledge"
+
     question_embedding = embedding_model.encode(question).tolist()
-    logging.info(f"\n🔍 Buscando na coleção `{collection}` para a pergunta: {question}")
+    logging.info(f"\n🔍 Buscando na coleção `{collection_name}` para a pergunta: {question}")
+
+    # 🔎 Contar número de pontos na coleção
+    try:
+        scroll_result = client.scroll(collection_name=collection_name, limit=100)
+        total_docs = len(scroll_result[0])
+    except Exception as e:
+        logging.warning(f"Erro ao contar documentos: {e}")
+        total_docs = 0
+
+    # 📏 Ajustar threshold dinamicamente
+    score_threshold = 0.7 if total_docs > 10 else 0.3
+    logging.info(f"📊 Total de sentenças na coleção: {total_docs} → Usando threshold: {score_threshold}")
 
     results = client.search(
-        collection_name=collection,
+        collection_name=collection_name,
         query_vector=question_embedding,
         limit=5
     )
 
-    logging.info(f"\n🔹 Resultados brutos do Qdrant: {results}")
-
-    high_score = [hit for hit in results if hit.score and hit.score >= 0.7]
+    # 🧠 Filtrar por score
+    high_score = [hit for hit in results if hit.score and hit.score >= score_threshold]
 
     if high_score:
         context = " ".join([hit.payload["text"] for hit in high_score])
@@ -69,6 +84,32 @@ def retrieve_context(question):
 
     logging.info(f"\n✅ Contexto recuperado: {context}")
     return context
+
+# def retrieve_context(question):
+#     """Decide coleção e aplica filtro de score >= 0.7"""
+#     collection = "mlops_knowledge" if "mlops" in question.lower() else "hotmart_knowledge"
+#     question_embedding = embedding_model.encode(question).tolist()
+#     logging.info(f"\n🔍 Buscando na coleção `{collection}` para a pergunta: {question}")
+
+#     results = client.search(
+#         collection_name=collection,
+#         query_vector=question_embedding,
+#         limit=5
+#     )
+
+#     logging.info(f"\n🔹 Resultados brutos do Qdrant: {results}")
+#     score_threshold = 0.7 if total_docs > 10 else 0.3
+
+#     high_score = [hit for hit in results if hit.score and hit.score >= 0.7]
+
+#     if high_score:
+#         context = " ".join([hit.payload["text"] for hit in high_score])
+#     else:
+#         context = "Não há informações suficientes no contexto para responder à pergunta."
+
+#     logging.info(f"\n✅ Contexto recuperado: {context}")
+    return context
+
 import re
 
 def clean_response(response):
@@ -119,12 +160,11 @@ def generate_answer(question, context):
         return "Não sei a resposta."
 
     prompt = f"""
-Responda à pergunta abaixo de forma clara, objetiva e apenas com base no contexto fornecido.
+        Responda à pergunta abaixo de forma clara, objetiva e apenas com base no contexto fornecido.
 
-Pergunta: {question}
-Contexto: {context}
-Resposta:
-"""
+        Pergunta: {question}
+        Contexto: {context}
+    """
 
     response = generator(
         prompt,
@@ -149,6 +189,15 @@ def query():
     context = retrieve_context(question)
     response = generate_answer(question, context)
     # return jsonify({"response": response}), 200
+     # 📝 Salvar resposta em um arquivo TXT
+    try:
+        with open("ultima_resposta.txt", "w", encoding="utf-8") as f:
+            f.write(f"Pergunta: {question}\n\n")
+            f.write(f"Contexto utilizado:\n{context}\n\n")
+            f.write(f"Resposta gerada:\n{response}\n")
+        logging.info("📝 Resposta salva em 'ultima_resposta.txt'")
+    except Exception as e:
+        logging.warning(f"Erro ao salvar resposta: {e}")
     return app.response_class(
         response=json.dumps({"response": response}, ensure_ascii=False),
         status=200,
