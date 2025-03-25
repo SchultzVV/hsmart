@@ -6,7 +6,7 @@ docker-compose up --build
 ```
 
 ## Endpoints
-Teste os endpoints são apresentados em duas etapas, a primeira (1)  é uma ingestão manual e depois uma pergunta sobre o contexto de MLOPS. Depois em (2) é apresentada a ingestão automatica do site hotmart seguida de duas perguntas sobre o contexto hotmart. Por último são mostrados endpoins para deletar coleções.
+Teste os endpoints que são apresentados em duas etapas, a primeira (1)  é uma ingestão manual e depois uma pergunta sobre o contexto de MLOPS. Depois em (2) é apresentada a ingestão automatica do site hotmart seguida de duas perguntas sobre o contexto hotmart. Por último são mostrados endpoins para deletar coleções.
 
 ### **1 - Ingestion_service Manual**
 A imagem de ingestão de informações no banco de vetores `qdrant` faz automaticamente a coleta, ingestão e incorporação das informações. O endpoint de ingestão pode ser usado assim: 
@@ -28,7 +28,7 @@ Deve receber uma resposta JSON:
 ### **1 - Retrieval_service**
 
 ```bash
-     curl -X POST http://localhost:5004/query -H      "Content-Type:  application/json" -d '{"question": "o que é mlops?"}'  
+curl -X POST http://localhost:5004/query -H      "Content-Type:  application/json" -d '{"question": "o que é mlops?"}'  
 ```
 A última resposta será salva num arquivo [`ultima_resposta.txt`](services/retrieval_service/ultima_resposta.txt)
  e será algo do tipo:
@@ -75,9 +75,9 @@ A Hotmart é um ecossistema completo e in constante evoluciono para trazer ainda
 ```
 *    Uma outra pergunta poderia ser:
 ```bash
-curl -X POST "http://127.0.0.1:5004/query" \               
+curl -X POST "http://127.0.0.1:5004/query" \
      -H "Content-Type: application/json" \
-     -d '{"question": "a hotmart foi fundada quando?"}'
+     -d '{"question": "a hotmart foi fundada quando??"}'
 ```
 O que tem como resposta:
 ```text
