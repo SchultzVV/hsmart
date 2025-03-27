@@ -96,3 +96,13 @@ ou
 ```bash
 docker logs retrieval_service --follow
 ```
+##### O Makefile criado tem os seguintes comandos:
+
+```bash
+make build-retrieval    # reconstrói a imagem do retrieval
+make restart-retrieval  # para, remove, reconstrói e sobe só o retrieval
+make up                 # sobe todos os serviços
+make down               # para tudo
+make logs               # logs do retrieval
+make logs-all           # logs de todos os containers
+```

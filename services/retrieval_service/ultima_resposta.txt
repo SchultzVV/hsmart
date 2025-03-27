@@ -1,8 +1,7 @@
-Pergunta: a hotmart foi fundada quando??
+Pergunta: a ufsm tem curso de malabarismo??
 
 Contexto utilizado:
-Em 2011, a Hotmart foi fudada!
-A maior missão é possibilitar que todos possam viver de suas paixões, compartilhando conhecimento e ajudando no crescimento profissional e pessoal de outras pessoas
+A UFSM tem o curso de Fisica. A UFSM tem o curso de Matematica. A UFSM tem o curso de Farmacia. A UFSM tem o curso de Direito. A UFSM tem o curso de Historia.
 
 Resposta gerada:
-2011.
+UFSM tem o curso de Fisica.

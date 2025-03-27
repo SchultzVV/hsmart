@@ -8,6 +8,7 @@ import logging
 import sys
 from flask import Flask, request, jsonify, Response
 import json
+from unidecode import unidecode
 
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
@@ -45,45 +46,145 @@ generator = pipeline(
 
 logging.info("\n✅ Pipeline de geração de texto carregado!")
 
+import random
+
+
+def decide_collection(question, max_results_per_collection=3):
+    question_embedding = embedding_model.encode(question).tolist()
+
+    try:
+        collections = client.get_collections()
+        available = [col.name for col in collections.collections]
+
+        if not available:
+            logging.warning("❌ Nenhuma coleção disponível no Qdrant.")
+            return None
+
+        scores = {}
+        for col in available:
+            try:
+                results = client.search(
+                    collection_name=col,
+                    query_vector=question_embedding,
+                    limit=max_results_per_collection
+                )
+                if results:
+                    # Calcula score médio ou máximo
+                    avg_score = sum([r.score for r in results if r.score]) / len(results)
+                    scores[col] = avg_score
+                    logging.info(f"📊 Score médio da coleção `{col}`: {avg_score:.4f}")
+            except Exception as e:
+                logging.warning(f"Erro ao buscar na coleção `{col}`: {e}")
+
+        if scores:
+            # 🔝 Seleciona a coleção com maior score médio
+            best_collection = max(scores, key=scores.get)
+            logging.info(f"✅ Coleção mais relevante: `{best_collection}`")
+            return best_collection
+        else:
+            logging.warning("⚠️ Nenhuma coleção retornou resultados relevantes.")
+            return None
+
+    except Exception as e:
+        logging.error(f"Erro ao decidir melhor coleção: {e}")
+        return None
+
+
+# def decide_collection(question):
+#     q = question.lower()
+#     if "ufsm" in q or "campus" in q or "matrícula" in q or "disciplina" in q:
+#         return "ufsm_knowledge"
+#     elif "hotmart" in q:
+#         return "hotmart_knowledge"
+#     elif "mlops" in q or "modelo" in q:
+#         return "mlops_knowledge"
+#     return None
 
 def retrieve_context(question):
-    """Busca os trechos mais relevantes no Qdrant e ajusta dinamicamente o filtro de score"""
-    if "mlops" in question.lower():
-        collection_name = "mlops_knowledge"
-    else:
-        collection_name = "hotmart_knowledge"
-
+    collection_name = decide_collection(question)
     question_embedding = embedding_model.encode(question).tolist()
-    logging.info(f"\n🔍 Buscando na coleção `{collection_name}` para a pergunta: {question}")
 
-    # 🔎 Contar número de pontos na coleção
     try:
-        scroll_result = client.scroll(collection_name=collection_name, limit=100)
-        total_docs = len(scroll_result[0])
+        collections = client.get_collections()
+        available = [col.name for col in collections.collections]
+        logging.info(f"📚 Coleções disponíveis: {available}")
+
+        # 🔍 Caso a coleção exista normalmente, busca apenas nela
+        if collection_name and collection_name in available:
+            logging.info(f"🔍 Usando coleção detectada: `{collection_name}`")
+            results = client.search(
+                collection_name=collection_name,
+                query_vector=question_embedding,
+                limit=5
+            )
+            high_score = [hit for hit in results if hit.score and hit.score >= 0.7]
+            if high_score:
+                return " ".join([hit.payload["text"] for hit in high_score])
+            return "Não há informações suficientes no contexto para responder à pergunta."
+
+        # 🔁 Se nenhuma coleção for encontrada ou a escolhida não existir
+        logging.warning(f"⚠️ Coleção `{collection_name}` não encontrada. Buscando em todas as coleções.")
+        combined_context = []
+
+        for col in available:
+            try:
+                results = client.search(
+                    collection_name=col,
+                    query_vector=question_embedding,
+                    limit=3
+                )
+                high_score = [hit for hit in results if hit.score and hit.score >= 0.7]
+                combined_context.extend([hit.payload["text"] for hit in high_score])
+                logging.info(f"🔹 Resultados da coleção `{col}`: {len(high_score)} trechos")
+            except Exception as e:
+                logging.warning(f"Erro ao buscar na coleção `{col}`: {e}")
+
+        if combined_context:
+            return " ".join(combined_context)
+        return "Não há informações suficientes em nenhuma coleção para responder à pergunta."
+
     except Exception as e:
-        logging.warning(f"Erro ao contar documentos: {e}")
-        total_docs = 0
+        return f"Erro ao verificar coleções disponíveis: {e}"
 
-    # 📏 Ajustar threshold dinamicamente
-    score_threshold = 0.7 if total_docs > 10 else 0.3
-    logging.info(f"📊 Total de sentenças na coleção: {total_docs} → Usando threshold: {score_threshold}")
 
-    results = client.search(
-        collection_name=collection_name,
-        query_vector=question_embedding,
-        limit=5
-    )
+# def retrieve_context(question):
+#     """Busca os trechos mais relevantes no Qdrant e ajusta dinamicamente o filtro de score"""
+#     if "mlops" in question.lower():
+#         collection_name = "mlops_knowledge"
+#     else:
+#         collection_name = "hotmart_knowledge"
 
-    # 🧠 Filtrar por score
-    high_score = [hit for hit in results if hit.score and hit.score >= score_threshold]
+#     question_embedding = embedding_model.encode(question).tolist()
+#     logging.info(f"\n🔍 Buscando na coleção `{collection_name}` para a pergunta: {question}")
 
-    if high_score:
-        context = " ".join([hit.payload["text"] for hit in high_score])
-    else:
-        context = "Não há informações suficientes no contexto para responder à pergunta."
+#     # 🔎 Contar número de pontos na coleção
+#     try:
+#         scroll_result = client.scroll(collection_name=collection_name, limit=100)
+#         total_docs = len(scroll_result[0])
+#     except Exception as e:
+#         logging.warning(f"Erro ao contar documentos: {e}")
+#         total_docs = 0
 
-    logging.info(f"\n✅ Contexto recuperado: {context}")
-    return context
+#     # 📏 Ajustar threshold dinamicamente
+#     score_threshold = 0.7 if total_docs > 10 else 0.3
+#     logging.info(f"📊 Total de sentenças na coleção: {total_docs} → Usando threshold: {score_threshold}")
+
+#     results = client.search(
+#         collection_name=collection_name,
+#         query_vector=question_embedding,
+#         limit=5
+#     )
+
+#     # 🧠 Filtrar por score
+#     high_score = [hit for hit in results if hit.score and hit.score >= score_threshold]
+
+#     if high_score:
+#         context = " ".join([hit.payload["text"] for hit in high_score])
+#     else:
+#         context = "Não há informações suficientes no contexto para responder à pergunta."
+
+#     logging.info(f"\n✅ Contexto recuperado: {context}")
+#     return context
 
 # def retrieve_context(question):
 #     """Decide coleção e aplica filtro de score >= 0.7"""
@@ -171,8 +272,8 @@ def generate_answer(question, context):
         max_length=120,   # 🔹 Evita cortes
         min_length=40,    # 🔹 Garante uma resposta completa
         truncation=True,
-        do_sample=False,
-        temperature=0.2,
+        do_sample=True,
+        temperature=0.3,
         top_k=40,
         top_p=0.8,
         repetition_penalty=1.2
@@ -186,6 +287,8 @@ def generate_answer(question, context):
 def query():
     data = request.json
     question = data.get("question", "")
+    question = unidecode(question)
+
     context = retrieve_context(question)
     response = generate_answer(question, context)
     # return jsonify({"response": response}), 200

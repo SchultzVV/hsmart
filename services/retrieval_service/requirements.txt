@@ -1,9 +1,13 @@
 flask
-transformers
+# transformers
+transformers==4.36.2
+
 chromadb
 sentence-transformers
 torch
+# torch>=2.1.0
 qdrant-client
 pytest
 datasets
 sentencepiece
+Unidecode
