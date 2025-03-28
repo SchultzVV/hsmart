@@ -11,7 +11,7 @@ services:
     restart: always
 
   ingestion_service:
-    build: ./services/ingestion_service
+    build: ./ingestion_service
     image: ghcr.io/schultzvv/ingestion_service:latest
     container_name: ingestion_service
     ports:
@@ -19,14 +19,14 @@ services:
     depends_on:
       - vector_db
     volumes:
-      - ./services/ingestion_service:/app
+      - ./ingestion_service:/app
     restart: always
     environment:
       - DEBUG=True
 
   retrieval_service:
     build:
-      context: ./services/retrieval_service
+      context: ./retrieval_service
       args:
         HUGGINGFACE_TOKEN: ${HUGGINGFACE_TOKEN}
     image: ghcr.io/schultzvv/retrieval_service:latest
@@ -36,7 +36,7 @@ services:
     depends_on:
       - vector_db
     volumes:
-      - ./services/retrieval_service:/app
+      - ./retrieval_service:/app
     restart: always
     env_file:
       - .env

@@ -1,7 +1,0 @@
-Pergunta: a ufsm tem curso de malabarismo??
-
-Contexto utilizado:
-A UFSM tem o curso de Fisica. A UFSM tem o curso de Matematica. A UFSM tem o curso de Farmacia. A UFSM tem o curso de Direito. A UFSM tem o curso de Historia.
-
-Resposta gerada:
-UFSM tem o curso de Fisica.
