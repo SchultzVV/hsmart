@@ -38,7 +38,6 @@ make lint
 | `/ingest_ufsm`         | POST   | Ingestão de cursos de graduação da UFSM             |
 | `/ingest_ufsm_geral`   | POST   | Geração automática de conhecimento geral da UFSM    |
 | `/ingest_hotmart`      | POST   | Ingestão de texto da Hotmart                        |
-| `/ingest_manual`       | POST   | Ingestão de texto manual em uma coleção             |
 | `/get_courses_list`    | GET    | Lista os cursos da UFSM                             |
 | `/get_all_collections` | GET    | Lista todas as coleções                             |
 | `/get_all_documents`   | GET    | Retorna os documentos por coleção                   |
