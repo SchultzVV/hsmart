@@ -1,10 +1,13 @@
-from flask import request, jsonify
+import os
 import logging
+from flask import request, jsonify
 from datetime import datetime
-from sentence_transformers import SentenceTransformer
+# from sentence_transformers import SentenceTransformer
 from utils.vector_store import recreate_and_upsert
+from langchain_openai.embeddings import OpenAIEmbeddings
 
-embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
+embedding_model = OpenAIEmbeddings(model="text-embedding-3-small", openai_api_key=os.environ["OPENAI_API_KEY"])
+# embeddings = embedding_model.embed_documents(frases)
 
 
 def ingest_manual(flask_request):

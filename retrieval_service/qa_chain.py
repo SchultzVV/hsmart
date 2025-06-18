@@ -1,14 +1,15 @@
 import qdrant_client
-from flask import Flask, request, jsonify
+from flask import Flask, request
 from transformers import T5ForConditionalGeneration, T5Tokenizer, pipeline
-from sentence_transformers import SentenceTransformer
+# from sentence_transformers import SentenceTransformer
 import torch
 import os
 import logging
 import sys
-from flask import Flask, request, jsonify, Response
+from flask import Flask, request
 import json
 from unidecode import unidecode
+from langchain_community.embeddings import OpenAIEmbeddings
 
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
@@ -19,10 +20,12 @@ app.logger.setLevel(logging.DEBUG)
 
 client = qdrant_client.QdrantClient(host="vector_db", port=6333)
 
-embedding_model = SentenceTransformer(
-    "all-MiniLM-L6-v2",
-    device="cuda" if torch.cuda.is_available() else "cpu"
-)
+
+embedding_model = OpenAIEmbeddings(model="text-embedding-3-small", openai_api_key=os.environ["OPENAI_API_KEY"])
+# embedding_model = SentenceTransformer(
+#     "all-MiniLM-L6-v2",
+#     device="cuda" if torch.cuda.is_available() else "cpu"
+# )
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 logging.info(f"\n🚀 Usando dispositivo: {device}")

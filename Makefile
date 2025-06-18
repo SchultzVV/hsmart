@@ -1,10 +1,15 @@
 # Nome do serviço
 SERVICE=retrieval_service
-PY_IMAGE=python:3.9-slim
+# PY_IMAGE=python:3.9-slim
+PY_IMAGE=python:3.10-slim
 CODE_DIR=/app
 GITHUB_USERNAME=schultzvv
 IMAGE_INGESTION=ghcr.io/$(GITHUB_USERNAME)/ingestion_service:latest
 IMAGE_RETRIEVAL=ghcr.io/$(GITHUB_USERNAME)/retrieval_service:latest
+
+# Arquivos docker-compose
+COMPOSE_DEV=-f docker-compose.dev.yaml --env-file .env
+COMPOSE_PRD=-f docker-compose.prd.yaml --env-file .env
 
 # Utilitário interno
 define run_py_container
@@ -27,48 +32,47 @@ format-check:
 format:
 	$(call run_py_container, pip install black && black .)
 
-# 🔨 Build local (com cache limpo)
+# 🔨 Build local (modo dev, com cache limpo)
 build:
-	docker-compose build --no-cache
+	docker-compose $(COMPOSE_DEV) build --no-cache
 
-# 🐳 Sobe serviços padrão
+# 🐳 Sobe serviços em modo dev
 up:
-	docker-compose up -d
+	docker-compose $(COMPOSE_DEV) up -d
 
-# 🐳 Encerra todos
+# 🐳 Encerra serviços dev
 down:
-	docker-compose down -v
+	docker-compose $(COMPOSE_DEV) down -v
 
-# ♻️ Reinicia o serviço de retrieval
+# ♻️ Reinicia o serviço de retrieval no dev
 retrieval-restart:
-	docker-compose stop retrieval_service
-	docker-compose rm -f retrieval_service
-	docker-compose build retrieval_service
-	docker-compose up -d retrieval_service
+	docker-compose $(COMPOSE_DEV) stop retrieval_service
+	docker-compose $(COMPOSE_DEV) rm -f retrieval_service
+	docker-compose $(COMPOSE_DEV) build retrieval_service
+	docker-compose $(COMPOSE_DEV) up -d retrieval_service
 
-# ♻️ Reinicia o serviço de ingestion
+# ♻️ Reinicia o serviço de ingestion no dev
 ingestion-restart:
-	docker-compose stop ingestion_service
-	docker-compose rm -f ingestion_service
-	docker-compose build ingestion_service
-	docker-compose up -d ingestion_service
+	docker-compose $(COMPOSE_DEV) stop ingestion_service
+	docker-compose $(COMPOSE_DEV) rm -f ingestion_service
+	docker-compose $(COMPOSE_DEV) build ingestion_service
+	docker-compose $(COMPOSE_DEV) up -d ingestion_service
 
-
-# 🧪 Sobe em modo dev
+# 🧪 Sobe em modo dev (alias)
 devup:
-	docker-compose -f docker-compose.dev.yaml up -d
+	docker-compose $(COMPOSE_DEV) up -d
 
 # 🚀 Sobe em modo prod
 prdup:
-	docker-compose -f docker-compose.prod.yaml up -d
+	docker-compose $(COMPOSE_PRD) up -d
 
-# 🔍 Logs individuais
+# 🔍 Logs individuais (dev)
 logs:
-	docker-compose logs -f $(SERVICE)
+	docker-compose $(COMPOSE_DEV) logs -f $(SERVICE)
 
-# 🔍 Todos logs
+# 🔍 Todos logs (dev)
 logs-all:
-	docker-compose logs -f
+	docker-compose $(COMPOSE_DEV) logs -f
 
 # 🛠️ Build imagens prod
 build-prod:
@@ -76,6 +80,9 @@ build-prod:
 	docker build -t $(IMAGE_RETRIEVAL) ./services/retrieval_service
 
 # 🚀 Push imagens
-push:
+push:build-prod
 	docker push $(IMAGE_INGESTION)
 	docker push $(IMAGE_RETRIEVAL)
+
+dockerprune:
+	docker system prune -f --volumes

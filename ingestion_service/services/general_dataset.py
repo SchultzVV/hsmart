@@ -8,12 +8,14 @@ import requests
 import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
 
-from sentence_transformers import SentenceTransformer
+# from sentence_transformers import SentenceTransformer
+from langchain_community.embeddings import OpenAIEmbeddings
 import qdrant_client
 from qdrant_client.http.models import PointStruct, VectorParams, Distance
 
 # Modelos e client
-embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
+# embedding_model = SentenceTransformer("all-MiniLM-L6-v2") # Local model
+embedding_model = OpenAIEmbeddings(model="text-embedding-3-small", openai_api_key=os.environ["OPENAI_API_KEY"])
 client = qdrant_client.QdrantClient(host="vector_db", port=6333)
 
 def get_all_sitemap_urls():
@@ -117,7 +119,9 @@ def ingest_ufsm_geral():
         f"No total, são {total_cursos} cursos oferecidos pela UFSM.",
     ])
 
-    embeddings = embedding_model.encode(frases)
+    # embeddings = embedding_model.encode(frases)
+    embeddings = embedding_model.embed_documents(frases)
+    
     logging.info(f"🧠 Ingerindo {len(frases)} frases em ufsm_geral_knowledge...")
 
     client.recreate_collection(

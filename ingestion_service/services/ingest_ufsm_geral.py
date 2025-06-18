@@ -3,10 +3,13 @@ import os
 import json
 from datetime import datetime
 from unidecode import unidecode
-from sentence_transformers import SentenceTransformer
+# from sentence_transformers import SentenceTransformer
 import qdrant_client
+from langchain_openai.embeddings import OpenAIEmbeddings
 
-embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
+# embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
+embedding_model = OpenAIEmbeddings(model="text-embedding-3-small", openai_api_key=os.environ["OPENAI_API_KEY"])
+
 client = qdrant_client.QdrantClient(host="vector_db", port=6333)
 
 def gerar_dataset_fine_tuning(cursos, frases, path="/app/data/ufsm_geral_dataset.jsonl"):

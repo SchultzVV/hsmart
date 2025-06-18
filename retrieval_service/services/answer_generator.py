@@ -48,8 +48,8 @@ def generate_answer(question: str, context: str, generator) -> str:
             max_length=120,
             min_length=40,
             truncation=True,
-            do_sample=True,
-            temperature=0.3,
+            do_sample=False,
+            temperature=0.5,
             top_k=40,
             top_p=0.8,
             repetition_penalty=1.2

@@ -82,3 +82,61 @@ Ao rodar `/ingest_ufsm_geral`, um arquivo JSONL com exemplos `{"prompt": ..., "r
 - `services/` → lógica de negócio
 - `utils/` → ferramentas comuns
 - `data/` → arquivos persistidos
+
+---
+```bash
+curl -X POST http://localhost:5003/ingest_ufsm \
+  -H "Content-Type: application/json" \
+  -d '{"tipo": "curso", "filtro_nome": "ciencia-da-computacao"}'
+```
+---
+```bash
+curl -X POST http://localhost:5003/ingest_ufsm_geral
+
+```
+
+---
+```bash
+curl -X POST http://localhost:5003/ingest_hotmart \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://example.hotmart.com/conteudo"}'
+
+```
+
+---
+```bash
+curl -X POST http://localhost:5003/ingest_manual \
+  -H "Content-Type: application/json" \
+  -d '{
+    "collection": "ufsm_manual",
+    "text": "Aqui está um conteúdo relevante da UFSM para ingestão manual."
+  }'
+
+```
+
+---
+```bash
+curl http://localhost:5003/get_courses_list
+
+```
+
+---
+```bash
+curl http://localhost:5003/get_all_collections
+
+```
+
+---
+```bash
+curl -G http://localhost:5003/get_all_documents \
+  --data-urlencode "collection=ufsm_manual"
+```
+
+---
+```bash
+curl -X POST http://localhost:5004/query \
+  -H "Content-Type: application/json" \
+  -d '{
+    "question": "A UFSM tem curso de Ciência da Computação?"
+  }'
+```

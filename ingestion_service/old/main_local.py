@@ -11,11 +11,6 @@ import csv
 from datetime import datetime
 from unidecode import unidecode
 
-from langchain_community.vectorstores import Qdrant
-from langchain_community.embeddings import OpenAIEmbeddings
-from langchain_community.document_loaders import WebBaseLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from qdrant_client import QdrantClient
 
 # Configura os logs para aparecerem no Docker
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
@@ -26,25 +21,8 @@ app = Flask(__name__)
 app.logger.setLevel(logging.DEBUG)
 # 
 client = qdrant_client.QdrantClient(host="vector_db", port=6333)
-# embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
-embedding_model = OpenAIEmbeddings(model="text-embedding-3-small", openai_api_key=os.environ["OPENAI_API_KEY"])
+embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
 
-def lang_embedding_model_ufsm_geral_knowledge():
-    embedding = OpenAIEmbeddings()
-    qdrant = Qdrant(
-        client=QdrantClient(host="vector_db", port=6333),
-        collection_name="ufsm_geral_knowledge",
-        embeddings=embedding
-    )
-
-    # Crawling (simples)
-    loader = WebBaseLoader("https://www.ufsm.br/cursos/graduacao/tecnologia-da-informacao/")
-    docs = loader.load()
-
-    # Split e persistência
-    splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
-    chunks = splitter.split_documents(docs)
-    qdrant.add_documents(chunks)
 
 def extract_urls_from_sitemap(sitemap_url):
     response = requests.get(sitemap_url)
@@ -146,8 +124,7 @@ def ingest_ufsm():
     if not sentences:
         return jsonify({"error": "Nenhum conteúdo válido encontrado nas páginas filtradas."}), 500
 
-    # embeddings = embedding_model.encode(sentences)
-    
+    embeddings = embedding_model.encode(sentences)
     logging.info(f"📌 Total de sentenças extraídas: {len(sentences)}")
 
     collection_name = f"ufsm_{tipo}"

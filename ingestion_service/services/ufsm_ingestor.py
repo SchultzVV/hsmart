@@ -7,11 +7,14 @@ from bs4 import BeautifulSoup
 import requests
 from unidecode import unidecode
 import qdrant_client
-from sentence_transformers import SentenceTransformer
+from langchain_openai.embeddings import OpenAIEmbeddings
+
 from utils.sitemap_utils import get_all_sitemap_urls, extract_urls_from_sitemap, filter_course_urls, save_urls_to_csv
 
+# embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
+
+embedding_model = OpenAIEmbeddings(model="text-embedding-3-small", openai_api_key=os.environ["OPENAI_API_KEY"])
 client = qdrant_client.QdrantClient(host="vector_db", port=6333)
-embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
 
 def ingest_ufsm(request):
     req = request.get_json(silent=True) or {}

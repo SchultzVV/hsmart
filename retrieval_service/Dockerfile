@@ -1,16 +1,20 @@
-FROM python:3.9
+# FROM python:3.9
+FROM python:3.10-slim
+
 
 WORKDIR /app
 
 COPY requirements.txt .
 
 RUN pip install --upgrade pip
+RUN apt-get update && apt-get install -y git
 
 
 RUN pip install torch==2.0.1 --index-url https://download.pytorch.org/whl/cu118
 RUN pip install torchvision==0.15.2 torchaudio==2.0.2 --index-url https://download.pytorch.org/whl/cu118
 RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install --no-cache-dir huggingface_hub
+RUN rm -rf /root/.cache/pip
 
 # Recebe o token como argumento da build
 ARG HUGGINGFACE_TOKEN

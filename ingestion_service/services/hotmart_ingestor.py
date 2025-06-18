@@ -1,11 +1,15 @@
+import os
 import requests
 from bs4 import BeautifulSoup
 import logging
 from datetime import datetime
 from utils.vector_store import recreate_and_upsert
-from sentence_transformers import SentenceTransformer
+# from sentence_transformers import SentenceTransformer
 
-embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
+# embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
+from langchain_community.embeddings import OpenAIEmbeddings
+
+embedding_model = OpenAIEmbeddings(model="text-embedding-3-small", openai_api_key=os.environ["OPENAI_API_KEY"])
 
 def extract_text_from_url(url):
     response = requests.get(url, timeout=5)
