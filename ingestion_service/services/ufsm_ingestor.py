@@ -136,11 +136,11 @@ def ingest_ufsm_cursos_rag():# esse é o bolado que tá rolando  certo
                 title, content = extract_page_text(page_url)
                 if not content:
                     continue
-                # if c == 100:
-                    # logger.debug("🔴 Limite de 100 páginas atingido, interrompendo ingestão.")
-                    # logger.debug("🔴(DESLIGADO O STOP, pra ligar faz stop=true)🔴")
-                    # stop=False
-                    # break
+                if c == 100:
+                    logger.debug("🔴 Limite de 100 páginas atingido, interrompendo ingestão.")
+                    logger.debug("🔴(DESLIGADO O STOP, pra ligar faz stop=true)🔴")
+                    stop=True
+                    break
                 print(f"  ✅ Página acessada: {page_url}")
                 logger.debug(f"📄 {title} | URL: {page_url}")
                 logger.debug(f"a = {a} ")

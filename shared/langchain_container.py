@@ -34,6 +34,17 @@ class LangChainContainer:
         self.qa_chain = None
 
     def set_collection(self, collection_name: str):
+        existing = [col.name for col in self.qdrant_client.get_collections().collections]
+        if collection_name not in existing:
+            # Cria a coleção com tamanho default (ex: 1536 se for OpenAI embeddings)
+            embedding_dim = len(self.embedding_model.embed_documents(["teste"])[0])
+            self.qdrant_client.recreate_collection(
+                collection_name=collection_name,
+                vectors_config=VectorParams(
+                    size=embedding_dim,
+                    distance=Distance.COSINE
+                )
+            )
         """
         Inicializa a cadeia de recuperação e resposta com a coleção escolhida.
         """

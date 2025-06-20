@@ -1,7 +1,7 @@
-Pergunta: faca uma sintese das noticias sobre engenharia agricola
+Pergunta: O professor Charles da aula de calculo A na ufsm?
 
 Contexto:
 
 
 Resposta:
-As informações fornecidas indicam que a Universidade Federal de Santa Maria (UFSM) oferece o curso de Engenharia Agrícola.
+Desculpe, mas a informação fornecida não menciona um professor chamado Charles ou uma aula de cálculo A na UFSM.
