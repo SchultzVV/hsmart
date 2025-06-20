@@ -16,7 +16,7 @@ class CollectionRouter:
         # 🎯 Regras simples (expanda conforme necessário)
         if "curso" in q or "oferece" in q or "tem curso de" in q or "existe" in q:
             return "ufsm_faqs"
-        if "matrícula" in q or "campus" in q or "colegiado" in q:
+        else:
             return "ufsm_knowledge"
         return None
 

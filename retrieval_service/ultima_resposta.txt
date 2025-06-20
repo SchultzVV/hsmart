@@ -1,7 +1,7 @@
-Pergunta: quantos kilometros tem de santa maria a praia do rosa?
+Pergunta: faca uma sintese das noticias sobre engenharia agricola
 
 Contexto:
 
 
 Resposta:
-Desculpe, eu não tenho essa informação.
+As informações fornecidas indicam que a Universidade Federal de Santa Maria (UFSM) oferece o curso de Engenharia Agrícola.

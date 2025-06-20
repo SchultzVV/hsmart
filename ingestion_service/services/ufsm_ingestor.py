@@ -118,7 +118,7 @@ def ingest_ufsm_cursos_rag():# esse é o bolado que tá rolando  certo
 
         for sub_url, _ in sub_sitemaps:
             b+=1
-            logger.debug(b)
+            # logger.debug(b)
             if not sub_url or not sub_url.endswith(".xml"):
                 continue
 
@@ -127,7 +127,7 @@ def ingest_ufsm_cursos_rag():# esse é o bolado que tá rolando  certo
 
             for page_url, lastmod in sub_sub_sitemaps:
                 c+=1
-                logger.debug(c)
+                # logger.debug(c)
                 if not page_url or page_url.endswith(".xml"):
                     continue
                 if not is_recent(lastmod.text if lastmod is not None else None):
@@ -136,11 +136,11 @@ def ingest_ufsm_cursos_rag():# esse é o bolado que tá rolando  certo
                 title, content = extract_page_text(page_url)
                 if not content:
                     continue
-                if c == 100:
-                    logger.debug("🔴 Limite de 100 páginas atingido, interrompendo ingestão.")
-                    logger.debug("🔴(DESLIGADO O STOP, pra ligar faz stop=true)🔴")
-                    stop=False
-                    break
+                # if c == 100:
+                    # logger.debug("🔴 Limite de 100 páginas atingido, interrompendo ingestão.")
+                    # logger.debug("🔴(DESLIGADO O STOP, pra ligar faz stop=true)🔴")
+                    # stop=False
+                    # break
                 print(f"  ✅ Página acessada: {page_url}")
                 logger.debug(f"📄 {title} | URL: {page_url}")
                 logger.debug(f"a = {a} ")
