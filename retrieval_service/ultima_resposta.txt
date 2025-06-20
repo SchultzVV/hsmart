@@ -1,7 +1,7 @@
-Pergunta: Quantos cursos a UFSM tem  ??
+Pergunta: qual e a capital do rio grande do sul?
 
 Contexto:
 
 
 Resposta:
-Desculpe, mas o texto fornecido não especifica o número total de cursos oferecidos pela Universidade Federal de Santa Maria (UFSM).
+A capital do Rio Grande do Sul é Porto Alegre.

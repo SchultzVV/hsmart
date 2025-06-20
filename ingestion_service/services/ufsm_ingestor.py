@@ -81,7 +81,7 @@ def get_course_name_from_url(url):
     except Exception:
         return "Desconhecido"
 
-def ingest_ufsm_cursos_rag():
+def ingest_ufsm_cursos_rag():# esse é o bolado que tá rolando  certo
     print("🚀 Iniciando ingestão RAG de cursos da UFSM via sitemap...")
     container = LangChainContainer()
     splitter = RecursiveCharacterTextSplitter(chunk_size=512, chunk_overlap=64)
