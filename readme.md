@@ -98,7 +98,7 @@ curl -X POST http://localhost:5003/ingest_ufsm \
 
 ---
 
-### 🌐 4. Ingestão via crawling manual da UFSM (limitado a 50 páginas)
+### 🌐 4. Ingestão via crawling manual da UFSM (demora 8 horas pra consumir todo o site)
 
 ```bash
 curl -X POST http://localhost:5003/ingest_ufsm2
@@ -197,4 +197,4 @@ curl -X POST http://localhost:5003/delete_collection \
 
 ## 📄 Licença
 
-MIT © 2025 — UFSM AI Engineering Project
+2025 — SchultzVV AI Engineering Project
