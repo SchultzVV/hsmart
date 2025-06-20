@@ -1,22 +1,16 @@
 import os
 import json
 import logging
-from datetime import datetime
-from unidecode import unidecode
-
 import requests
+from unidecode import unidecode
 import xml.etree.ElementTree as ET
-from bs4 import BeautifulSoup
-
-# from sentence_transformers import SentenceTransformer
-from langchain_community.embeddings import OpenAIEmbeddings
-import qdrant_client
 from qdrant_client.http.models import PointStruct, VectorParams, Distance
+from shared.langchain_container import LangChainContainer
 
-# Modelos e client
-# embedding_model = SentenceTransformer("all-MiniLM-L6-v2") # Local model
-embedding_model = OpenAIEmbeddings(model="text-embedding-3-small", openai_api_key=os.environ["OPENAI_API_KEY"])
-client = qdrant_client.QdrantClient(host="vector_db", port=6333)
+
+container = LangChainContainer()
+client = container.qdrant_client
+embedding_model = container.embedding_model
 
 def get_all_sitemap_urls():
     robots_url = "https://www.ufsm.br/robots.txt"

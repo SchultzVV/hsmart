@@ -10,7 +10,9 @@ services:
     restart: always
 
   ingestion_service:
-    build: ./ingestion_service
+    build:
+      context: .
+      dockerfile: ingestion_service/Dockerfile
     container_name: ingestion_service
     ports:
       - "5003:5003"
@@ -18,13 +20,15 @@ services:
       - vector_db
     volumes:
       - ./ingestion_service:/app
+      - ./shared:/app/shared
     restart: always
     env_file:
       - .env
 
   retrieval_service:
     build:
-      context: ./retrieval_service
+      context: .
+      dockerfile: retrieval_service/Dockerfile
       args:
         HUGGINGFACE_TOKEN: ${HUGGINGFACE_TOKEN}
     container_name: retrieval_service
@@ -34,6 +38,7 @@ services:
       - vector_db
     volumes:
       - ./retrieval_service:/app
+      - ./shared:/app/shared
     restart: always
     env_file:
       - .env

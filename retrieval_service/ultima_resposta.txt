@@ -1,7 +1,7 @@
-Pergunta: A UFSM tem curso de Ciencia da Computacao?
+Pergunta: Quantos cursos a UFSM tem  ??
 
-Contexto utilizado:
-A UFSM tem o curso de Ciencia Da Computacao. O curso de Ciencia Da Computacao está disponível na UFSM. A UFSM tem o curso de Computacao. O curso de Computacao está disponível na UFSM. O curso de Engenharia De Computacao está disponível na UFSM.
+Contexto:
 
-Resposta gerada:
-UFSM tem o curso de Ciencia Da Computacao.
+
+Resposta:
+Desculpe, mas o texto fornecido não especifica o número total de cursos oferecidos pela Universidade Federal de Santa Maria (UFSM).

@@ -9,7 +9,9 @@ import sys
 from flask import Flask, request
 import json
 from unidecode import unidecode
-from langchain_community.embeddings import OpenAIEmbeddings
+# from langchain_community.embeddings import OpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
+
 
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
@@ -21,11 +23,18 @@ app.logger.setLevel(logging.DEBUG)
 client = qdrant_client.QdrantClient(host="vector_db", port=6333)
 
 
-embedding_model = OpenAIEmbeddings(model="text-embedding-3-small", openai_api_key=os.environ["OPENAI_API_KEY"])
+# embedding_model = OpenAIEmbeddings(model="text-embedding-3-small", openai_api_key=os.environ["OPENAI_API_KEY"])
 # embedding_model = SentenceTransformer(
 #     "all-MiniLM-L6-v2",
 #     device="cuda" if torch.cuda.is_available() else "cpu"
 # )
+
+# from openai import OpenAI
+from langchain_openai import OpenAIEmbeddings
+
+openai_client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+embedding_model = OpenAIEmbeddings()#client=openai_client, model="text-embedding-3-small")
+
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 logging.info(f"\n🚀 Usando dispositivo: {device}")

@@ -38,7 +38,7 @@ build:
 
 # 🐳 Sobe serviços em modo dev
 up:
-	docker-compose $(COMPOSE_DEV) up -d
+	docker-compose $(COMPOSE_DEV) up
 
 # 🐳 Encerra serviços dev
 down:
@@ -84,5 +84,20 @@ push:build-prod
 	docker push $(IMAGE_INGESTION)
 	docker push $(IMAGE_RETRIEVAL)
 
-dockerprune:
+prune:clean-images
 	docker system prune -f --volumes
+
+clean-images:
+	@if [ -n "$$(docker images -q)" ]; then \
+		echo "🔴 Removendo todas as imagens Docker..."; \
+		docker rmi -f $$(docker images -q); \
+	else \
+		echo "✅ Nenhuma imagem para remover."; \
+	fi
+
+
+goingestion:
+	docker exec -it ingestion_service /bin/bash
+
+goretrieval:
+	docker exec -it retrieval_service /bin/bash

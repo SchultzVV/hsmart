@@ -6,14 +6,17 @@ FROM python:3.10-slim
 WORKDIR /app
 
 # Copia e instala dependências
-COPY requirements.txt .
+COPY ingestion_service .
+COPY ../shared ./shared
+
+
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 RUN apt-get update && apt-get install -y git
 RUN rm -rf /root/.cache/pip
 # Copia o código-fonte da aplicação
 RUN apt-get install -y git
-COPY . .
+RUN git config --global credential.helper store
 
 # Exponha a porta, caso esteja rodando localmente
 EXPOSE 5000

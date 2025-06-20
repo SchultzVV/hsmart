@@ -108,8 +108,8 @@ curl -X POST http://localhost:5003/ingest_hotmart \
 curl -X POST http://localhost:5003/ingest_manual \
   -H "Content-Type: application/json" \
   -d '{
-    "collection": "ufsm_manual",
-    "text": "Aqui está um conteúdo relevante da UFSM para ingestão manual."
+    "collection": "ufsm_manuala",
+    "text": "A ufsm tem curso de matemática."
   }'
 
 ```
@@ -139,4 +139,11 @@ curl -X POST http://localhost:5004/query \
   -d '{
     "question": "A UFSM tem curso de Ciência da Computação?"
   }'
+```
+
+---
+```bash
+curl -X POST http://localhost:5003/delete_collection \
+  -H "Content-Type: application/json" \
+  -d '{"collection": "ufsm_knowledge"}'
 ```

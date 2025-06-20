@@ -10,7 +10,10 @@ services:
     restart: always
 
   ingestion_service:
-    build: ./ingestion_service
+    # build: ./ingestion_service
+    build:
+      context: .
+      dockerfile: ingestion_service/Dockerfile
     image: ghcr.io/schultzvv/ingestion_service:latest
     container_name: ingestion_service
     ports:
@@ -19,13 +22,15 @@ services:
       - vector_db
     volumes:
       - ./ingestion_service:/app
+      - ./shared:/app/shared
     restart: always
     environment:
       - DEBUG=True
 
   retrieval_service:
     build:
-      context: ./retrieval_service
+      context: .
+      dockerfile: retrieval_service/Dockerfile
       args:
         HUGGINGFACE_TOKEN: ${HUGGINGFACE_TOKEN}
     image: ghcr.io/schultzvv/retrieval_service:latest
@@ -36,6 +41,7 @@ services:
       - vector_db
     volumes:
       - ./retrieval_service:/app
+      - ./shared:/app/shared
     restart: always
     env_file:
       - .env

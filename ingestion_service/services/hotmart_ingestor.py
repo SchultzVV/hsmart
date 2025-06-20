@@ -1,44 +1,26 @@
-import os
 import requests
 from bs4 import BeautifulSoup
-import logging
 from datetime import datetime
-from utils.vector_store import recreate_and_upsert
-# from sentence_transformers import SentenceTransformer
+from flask import jsonify
+from shared.langchain_container import LangChainContainer
 
-# embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
-from langchain_community.embeddings import OpenAIEmbeddings
-
-embedding_model = OpenAIEmbeddings(model="text-embedding-3-small", openai_api_key=os.environ["OPENAI_API_KEY"])
-
-def extract_text_from_url(url):
-    response = requests.get(url, timeout=5)
-    if response.status_code != 200:
-        return None
-    soup = BeautifulSoup(response.text, "html.parser")
-    paragraphs = [p.get_text().strip() for p in soup.find_all("p") if len(p.get_text().strip()) > 40]
-    return "\n".join(paragraphs)
-
+container = LangChainContainer()
+embedding_model = container.embedding_model
 
 def ingest_hotmart():
-    from flask import jsonify  # import local para evitar dependência circular
     url = "https://hotmart.com/pt-br/blog/como-funciona-hotmart"
-    text = extract_text_from_url(url)
+    try:
+        r = requests.get(url)
+        if r.status_code != 200:
+            return jsonify({"error": "Falha ao acessar URL"}), 500
 
-    if not text:
-        return jsonify({"error": "Erro ao baixar a página"}), 500
+        soup = BeautifulSoup(r.text, "html.parser")
+        sentences = [p.get_text().strip() for p in soup.find_all("p") if len(p.get_text().strip()) > 40]
+        embeddings = embedding_model.embed_documents(sentences)
+        metadata = [{"source": url, "timestamp": datetime.now().isoformat()} for _ in sentences]
 
-    sentences = [s.strip() for s in text.split(". ") if len(s.strip()) >= 40]
-    embeddings = embedding_model.encode(sentences)
-    logging.info(f"📌 {len(sentences)} sentenças extraídas da página da Hotmart.")
+        container.store("hotmart_knowledge", sentences, embeddings, metadata)
+        return jsonify({"message": f"Ingestão de {len(sentences)} sentenças da Hotmart concluída."}), 200
 
-    metadata = [{"source": url, "timestamp": datetime.now().isoformat()} for _ in sentences]
-
-    recreate_and_upsert(
-        collection_name="hotmart_knowledge",
-        sentences=sentences,
-        embeddings=embeddings,
-        metadata=metadata
-    )
-
-    return jsonify({"message": "Texto da Hotmart processado com sucesso"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
