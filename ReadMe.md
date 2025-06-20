@@ -1,4 +1,4 @@
-# 🚀 Projeto de Protótipo de LLM com Base de Conhecimento (Qdrant + FLAN-T5)
+# 🚀 Projeto de Protótipo de LLM com Base de Conhecimento (Qdrant + FLAN-T5) VERSÃO 1.0 DA PARADA PRA HM
 
 Este projeto implementa um **protótipo de microsserviços** que utiliza um **banco vetorial (Qdrant)** e um **modelo de LLM (`FLAN-T5`)** para responder perguntas com base em um conhecimento previamente armazenado.
 
