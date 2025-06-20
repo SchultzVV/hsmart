@@ -10,7 +10,7 @@ services:
     restart: always
 
   ingestion_service:
-    image: ghcr.io/schultzvv/ingestion_service:latest
+    image: ghcr.io/${GITHUB_USERNAME}/ingestion_service:latest
     container_name: ingestion_service
     ports:
       - "5003:5003"
@@ -19,11 +19,13 @@ services:
     depends_on:
       - vector_db
     restart: always
+    env_file:
+      - .env.prd
     environment:
       - DEBUG=False
 
   retrieval_service:
-    image: ghcr.io/schultzvv/retrieval_service:latest
+    image: ghcr.io/${GITHUB_USERNAME}/retrieval_service:latest
     container_name: retrieval_service
     ports:
       - "5004:5004"

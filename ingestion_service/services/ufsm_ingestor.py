@@ -138,7 +138,8 @@ def ingest_ufsm_cursos_rag():# esse é o bolado que tá rolando  certo
                     continue
                 if c == 100:
                     logger.debug("🔴 Limite de 100 páginas atingido, interrompendo ingestão.")
-                    stop=True
+                    logger.debug("🔴(DESLIGADO O STOP, pra ligar faz stop=true)🔴")
+                    stop=False
                     break
                 print(f"  ✅ Página acessada: {page_url}")
                 logger.debug(f"📄 {title} | URL: {page_url}")

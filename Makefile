@@ -9,7 +9,7 @@ IMAGE_RETRIEVAL=ghcr.io/$(GITHUB_USERNAME)/retrieval_service:latest
 
 # Arquivos docker-compose
 COMPOSE_DEV=-f docker-compose.dev.yaml --env-file .env
-COMPOSE_PRD=-f docker-compose.prd.yaml --env-file .env
+COMPOSE_PRD=-f docker-compose.prd.yaml --env-file .env.prd
 
 # Utilitário interno
 define run_py_container
@@ -76,11 +76,15 @@ logs-all:
 
 # 🛠️ Build imagens prod
 build-prod:
-	docker build -t $(IMAGE_INGESTION) ./services/ingestion_service
+	docker build -t $(IMAGE_INGESTION) ./services/ingestion_service && \
 	docker build -t $(IMAGE_RETRIEVAL) ./services/retrieval_service
 
+# 🔐 Login no GitHub Container Registry
+docker-login-ghcr:
+	# echo "$$GITHUB_TOKEN" | docker login ghcr.io -u $$GITHUB_USERNAME --password-stdin
+
 # 🚀 Push imagens
-push:build-prod
+push: docker-login-ghcr build-prod
 	docker push $(IMAGE_INGESTION)
 	docker push $(IMAGE_RETRIEVAL)
 
@@ -101,3 +105,8 @@ goingestion:
 
 goretrieval:
 	docker exec -it retrieval_service /bin/bash
+
+query:
+	curl -X POST http://localhost:5004/query \
+	  -H "Content-Type: application/json" \
+	  -d '{"question": "$(q)"}'

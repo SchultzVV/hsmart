@@ -1,7 +1,7 @@
-Pergunta: qual e a capital do rio grande do sul?
+Pergunta: quantos kilometros tem de santa maria a praia do rosa?
 
 Contexto:
 
 
 Resposta:
-A capital do Rio Grande do Sul é Porto Alegre.
+Desculpe, eu não tenho essa informação.
