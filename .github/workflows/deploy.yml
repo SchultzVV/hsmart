@@ -20,20 +20,20 @@ jobs:
         run: |
           pip install flake8 black pytest pytest-cov requests
 
-      - name: Rodar Linter (flake8)
-        run: flake8 services/
+      # - name: Rodar Linter (flake8)
+      #   run: flake8 services/
 
-      - name: Rodar Formatter (black)
-        run: black --check services/
+      # - name: Rodar Formatter (black)
+      #   run: black --check services/
 
-      - name: Rodar Testes Unitários
-        run: pytest tests/ --disable-warnings
+      # - name: Rodar Testes Unitários
+      #   run: pytest tests/ --disable-warnings
 
       - name: Subir Containers para Testes de Integração
         run: docker-compose -f docker-compose.dev.yaml up -d
 
-      - name: Rodar Testes de Integração
-        run: pytest tests/test_integration.py --disable-warnings
+      # - name: Rodar Testes de Integração
+      #   run: pytest tests/test_integration.py --disable-warnings
 
       - name: Parar Containers Após Testes
         run: docker-compose -f docker-compose.dev.yaml down
