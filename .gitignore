@@ -3,5 +3,3 @@
 /olds
 huggingface_token.txt
 tests/__pycache__/
-/vector_db
-ReadMe.md
