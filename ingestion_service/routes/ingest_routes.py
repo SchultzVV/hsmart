@@ -9,8 +9,15 @@ from services.ufsm_ingestor import (
 )
 from services.hotmart_ingestor import ingest_hotmart
 from services.vector_ops import ingest_manual_text, list_collections, list_all_documents, delete_collection
+from services.reprocess_log import reprocess_from_log
+
 
 ingest_blueprint = Blueprint("ingest", __name__)
+
+
+@ingest_blueprint.route("/reprocess_log", methods=["POST"])
+def reprocess_log_endpoint():
+    return reprocess_from_log()
 
 @ingest_blueprint.route("/ingest_ufsm_cursos_rag", methods=["POST"])
 def ingest_rag_ufsm():

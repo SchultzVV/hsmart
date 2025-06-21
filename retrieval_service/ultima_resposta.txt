@@ -1,7 +1,7 @@
-Pergunta: O professor Charles da aula de calculo A na ufsm?
+Pergunta: qual e o roteiro para elaboracao de projeto de ensino?
 
 Contexto:
 
 
 Resposta:
-Desculpe, mas a informação fornecida não menciona um professor chamado Charles ou uma aula de cálculo A na UFSM.
+Desculpe, mas a informação fornecida não inclui um roteiro específico para a elaboração de um projeto de ensino.

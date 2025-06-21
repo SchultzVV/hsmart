@@ -104,6 +104,10 @@ curl -X POST http://localhost:5003/ingest_ufsm \
 curl -X POST http://localhost:5003/ingest_ufsm2
 ```
 
+```bash
+curl -X POST http://localhost:5003/reprocess_log
+```
+
 ---
 
 ### 🌍 5. Ingestão a partir de uma URL web arbitrária
