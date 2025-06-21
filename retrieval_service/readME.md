@@ -60,6 +60,11 @@ Este serviço implementa um sistema RAG (Retrieval-Augmented Generation), capaz 
 
 ## ⚙️ Como Funciona o Ciclo RAG
 
+**RAG (Retrieval-Augmented Generation)** is a hybrid architecture that combines:
+- **Document retrieval** from an external vector database (e.g., Qdrant),
+- with **text generation** powered by a large language model (LLM),
+- allowing the model to **answer questions grounded in your custom data**.
+
 ```mermaid
 graph TD
     A[Usuário envia pergunta] --> B[qa_service.py]
@@ -69,6 +74,50 @@ graph TD
     E --> F[ChatOpenAI responde com contexto]
     F --> G[Retorna resposta + fontes]
 ```
+---
+## 🔁 Extending RAG: Alternative Libraries for Document Retrieval
+
+The current system uses `Qdrant` via LangChain as the vector database for retrieving semantically relevant documents. However, the architecture is modular and can be extended with other libraries or frameworks for custom use cases, performance tuning, or academic experimentation.
+
+### 📚 Alternative Retrieval Backends
+
+| Library / Tool           | Description                                                                 | Documentation                                               |
+|--------------------------|-----------------------------------------------------------------------------|-------------------------------------------------------------|
+| **FAISS**                | Facebook AI Similarity Search — high-speed vector similarity search engine  | https://github.com/facebookresearch/faiss                  |
+| **Chroma**               | Lightweight, Python-native embedding DB, great for local dev                | https://docs.trychroma.com                                 |
+| **Weaviate**             | Scalable, cloud-native vector search engine with GraphQL support            | https://weaviate.io                                        |
+| **Milvus**               | High-performance distributed vector database with GPU support                | https://milvus.io/docs                                     |
+| **Pinecone**             | Cloud-native vector DB optimized for production LLM retrieval                | https://docs.pinecone.io                                   |
+| **Redis Vector Similarity** | Redis 7+ supports vector search with HNSW indexes                           | https://redis.io/docs/latest/stack/search/reference/vectors/ |
+
+---
+
+### ⚙️ How to Integrate with LangChain
+
+LangChain provides native wrappers for most vector stores:
+
+```python
+from langchain.vectorstores import FAISS, Chroma, Weaviate, Milvus, Pinecone
+
+# Example with FAISS
+vectorstore = FAISS.from_documents(docs, embedding_model)
+retriever = vectorstore.as_retriever()
+```
+
+---
+
+### 🧩 When to Switch
+
+- ✅ **FAISS**: best for local development, custom index strategies, research use.
+- ☁️ **Pinecone / Weaviate / Milvus**: ideal for scalable production systems.
+- 🧪 **Chroma**: lightweight, great for experimentation and teaching environments.
+- 🔄 **Redis**: handy if you're already using Redis and want embedded similarity search.
+
+---
+
+By abstracting the vector store behind LangChain’s Retriever API, you retain full flexibility while maintaining compatibility with RetrievalQA chains and downstream LLMs.
+
+
 
 ---
 
