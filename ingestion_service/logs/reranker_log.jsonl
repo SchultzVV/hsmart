@@ -1,0 +1,5 @@
+{"timestamp": "2025-06-21T22:09:38.507173", "question": "Qual a nota de corte para medicina?", "selected_collection": "ufsm_faqs", "scores": {"ufsm_faqs": 0.9231, "ufsm_knowledge": 0.712, "web_geral_loader": 0.6023}}
+{"timestamp": "2025-06-21T22:09:38.507194", "question": "Quais são os projetos didáticos de engenharia civil?", "selected_collection": "ufsm_knowledge", "scores": {"ufsm_knowledge": 0.8432, "ufsm_faqs": 0.6121, "web_geral_loader": 0.4322}}
+{"timestamp": "2025-06-21T22:09:38.507199", "question": "Como me inscrevo no curso de Direito?", "selected_collection": "ufsm_faqs", "scores": {"ufsm_faqs": 0.9012, "ufsm_knowledge": 0.4893, "web_geral_loader": 0.501}}
+{"timestamp": "2025-06-21T22:09:38.507204", "question": "Onde encontro o cronograma do projeto de ensino?", "selected_collection": "ufsm_knowledge", "scores": {"ufsm_knowledge": 0.8113, "ufsm_faqs": 0.6232, "web_geral_loader": 0.5531}}
+{"timestamp": "2025-06-21T22:09:38.507230", "question": "A UFSM oferece curso de Biomedicina?", "selected_collection": "ufsm_faqs", "scores": {"ufsm_faqs": 0.8991, "ufsm_knowledge": 0.5021, "web_geral_loader": 0.4311}}

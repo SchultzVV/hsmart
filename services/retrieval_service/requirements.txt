@@ -1,6 +1,0 @@
-flask
-transformers
-chromadb
-sentence-transformers
-torch
-qdrant-client

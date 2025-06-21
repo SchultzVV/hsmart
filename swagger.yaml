@@ -1,0 +1,125 @@
+openapi: 3.0.3
+info:
+  title: UFSM LLM Ingestion & Retrieval API
+  version: 1.0.0
+  description: >
+    API para ingestão de dados da UFSM, Hotmart e outros conteúdos, além de recuperação de conhecimento com LLMs e embeddings via Qdrant.
+
+servers:
+  - url: http://localhost:5003
+    description: Ingestion API
+  - url: http://localhost:5004
+    description: Retrieval API
+
+paths:
+  /ingest_ufsm:
+    post:
+      summary: Ingestão de cursos da UFSM
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tipo:
+                  type: string
+                  example: curso
+                filtro_nome:
+                  type: string
+                  example: ciencia-da-computacao
+      responses:
+        '200':
+          description: Ingestão realizada com sucesso
+        '400':
+          description: Tipo inválido
+        '404':
+          description: Nenhuma URL encontrada
+        '500':
+          description: Erro interno
+
+  /ingest_ufsm_geral:
+    post:
+      summary: Gera conhecimento geral da UFSM (frases e dataset para fine-tuning)
+      responses:
+        '200':
+          description: Frases ingeridas com sucesso
+        '500':
+          description: Erro na geração das frases
+
+  /get_courses_list:
+    get:
+      summary: Lista de cursos da UFSM
+      responses:
+        '200':
+          description: Lista de cursos retornada com sucesso
+
+  /ingest_hotmart:
+    post:
+      summary: Ingestão de conteúdo da Hotmart
+      responses:
+        '200':
+          description: Conteúdo ingerido com sucesso
+
+  /ingest_manual:
+    post:
+      summary: Ingestão manual de texto em uma coleção
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [text]
+              properties:
+                text:
+                  type: string
+                collection:
+                  type: string
+                  example: mlops_knowledge
+      responses:
+        '200':
+          description: Texto ingerido com sucesso
+        '400':
+          description: Texto obrigatório
+
+  /get_all_collections:
+    get:
+      summary: Lista todas as coleções do Qdrant
+      responses:
+        '200':
+          description: Coleções listadas
+
+  /get_all_documents:
+    get:
+      summary: Retorna todos os documentos das coleções
+      responses:
+        '200':
+          description: Documentos retornados
+
+  /query:
+    post:
+      summary: Gera resposta com base em contexto recuperado via embeddings
+      servers:
+        - url: http://localhost:5004
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [question]
+              properties:
+                question:
+                  type: string
+                  example: A UFSM tem curso de Física?
+      responses:
+        '200':
+          description: Resposta gerada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: string

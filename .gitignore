@@ -1,6 +1,5 @@
 .env
-services/retrieval_service/.env
+.env.prd
 /olds
 huggingface_token.txt
 tests/__pycache__/
-vector_db

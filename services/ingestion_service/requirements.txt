@@ -1,6 +1,0 @@
-flask
-requests
-beautifulsoup4
-chromadb
-sentence-transformers
-qdrant-client
