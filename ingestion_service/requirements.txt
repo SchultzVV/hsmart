@@ -6,6 +6,8 @@ requests==2.32.3
 beautifulsoup4==4.12.3
 unidecode==1.3.8
 
+playwright
+
 # 🧠 LLM, Embeddings e Vetores
 langchain==0.2.1
 langchain-community==0.2.3

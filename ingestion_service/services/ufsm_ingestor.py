@@ -142,9 +142,9 @@ def ingest_ufsm_cursos_rag():# esse é o bolado que tá rolando  certo
                     stop=False
                     # break
                 print(f"  ✅ Página acessada: {page_url}")
-                logger.debug(f"📄 {title} | URL: {page_url}")
-                logger.debug(f"a = {a} ")
-                logger.debug(f"b = {b} ")
+                # logger.debug(f"📄 {title} | URL: {page_url}")
+                # logger.debug(f"a = {a} ")
+                # logger.debug(f"b = {b} ")
                 logger.debug(f"c = {c} ")
 
                 curso_logs[curso]["urls_acessadas"].append(page_url)

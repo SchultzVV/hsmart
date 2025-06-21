@@ -3,10 +3,11 @@ from services.ufsm_ingestor import (
     ingest_from_sitemap,
     ingest_all_courses_text,
     ingest_via_crawling,
-    ingest_from_web_loader,
     get_all_courses,
     ingest_ufsm_cursos_rag
+    # ingest_from_web_loader,
 )
+from services.ingest_from_web_loader import ingest_from_web_loader
 from services.hotmart_ingestor import ingest_hotmart
 from services.vector_ops import ingest_manual_text, list_collections, list_all_documents, delete_collection
 from services.reprocess_log import reprocess_from_log
