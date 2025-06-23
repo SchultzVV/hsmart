@@ -1,6 +1,6 @@
 # Nome do serviço
 SERVICE=retrieval_service
-# PY_IMAGE=python:3.9-slim
+
 PY_IMAGE=python:3.10-slim
 CODE_DIR=/app
 GITHUB_USERNAME=schultzvv
