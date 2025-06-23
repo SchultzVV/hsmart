@@ -29,14 +29,14 @@ jobs:
       # - name: Rodar Testes Unitários
       #   run: pytest tests/ --disable-warnings
 
-      - name: Subir Containers para Testes de Integração
-        run: docker-compose -f docker-compose.dev.yaml up -d
+      # - name: Subir Containers para Testes de Integração
+        # run: docker-compose -f docker-compose.dev.yaml up -d
 
       # - name: Rodar Testes de Integração
       #   run: pytest tests/test_integration.py --disable-warnings
 
-      - name: Parar Containers Após Testes
-        run: docker-compose -f docker-compose.dev.yaml down
+      # - name: Parar Containers Após Testes
+        # run: docker-compose -f docker-compose.dev.yaml down
 
 
   build-and-push:
