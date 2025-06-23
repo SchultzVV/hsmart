@@ -11,9 +11,14 @@ from services.ingest_from_web_loader import ingest_from_web_loader
 from services.hotmart_ingestor import ingest_hotmart
 from services.vector_ops import ingest_manual_text, list_collections, list_all_documents, delete_collection
 from services.reprocess_log import reprocess_from_log
+from services.ingest_faq_from_json import ingest_faq_from_jsonl
 
 
 ingest_blueprint = Blueprint("ingest", __name__)
+
+@ingest_blueprint.route("/process_faq_json", methods=["POST"])
+def process_faq_json():
+    return ingest_faq_from_jsonl("data/ufsm_geral_dataset.jsonl", collection_name="ufsm_faqs")
 
 
 @ingest_blueprint.route("/reprocess_log", methods=["POST"])

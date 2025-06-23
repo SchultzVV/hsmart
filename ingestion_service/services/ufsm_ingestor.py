@@ -117,6 +117,9 @@ def ingest_ufsm_cursos_rag():# esse é o bolado que tá rolando  certo
         logger.debug(f"🔍 {len(sub_sitemaps)} sub-sitemaps encontrados para {curso}")
 
         for sub_url, _ in sub_sitemaps:
+            if stop:
+                print("🔴 Ingestão interrompida pelo usuário.")
+                break
             b+=1
             # logger.debug(b)
             if not sub_url or not sub_url.endswith(".xml"):
@@ -136,15 +139,15 @@ def ingest_ufsm_cursos_rag():# esse é o bolado que tá rolando  certo
                 title, content = extract_page_text(page_url)
                 if not content:
                     continue
-                if c == 100:
+                if c == 10:
                     logger.debug("🔴 Limite de 100 páginas atingido, interrompendo ingestão.")
                     logger.debug("🔴(DESLIGADO O STOP, pra ligar faz stop=true)🔴")
-                    stop=False
-                    # break
+                    stop=True
+                    break
                 print(f"  ✅ Página acessada: {page_url}")
-                # logger.debug(f"📄 {title} | URL: {page_url}")
-                # logger.debug(f"a = {a} ")
-                # logger.debug(f"b = {b} ")
+                logger.debug(f"📄 {title} | URL: {page_url}")
+                logger.debug(f"a = {a} ")
+                logger.debug(f"b = {b} ")
                 logger.debug(f"c = {c} ")
 
                 curso_logs[curso]["urls_acessadas"].append(page_url)

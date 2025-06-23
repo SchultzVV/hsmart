@@ -3,7 +3,7 @@ from unidecode import unidecode
 import json
 import logging
 from services.qa_service import qa_chain
-
+from shared.conversation_memory import get_conversation_memory
 
 query_blueprint = Blueprint("query", __name__)
 logger = logging.getLogger(__name__)
@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 def query():
     data = request.get_json()
     question = unidecode(data.get("question", "").strip())
+    session_id = data.get("session_id", "default")
 
     if not question:
         return jsonify({"error": "A pergunta não pode estar vazia."}), 400
@@ -20,7 +21,7 @@ def query():
 
     try:
         # result = qa_chain.invoke({"query": question})
-        result = qa_chain(question)
+        result = qa_chain(question, session_id=session_id)
         answer = result["result"]
         sources = result.get("source_documents", [])
         context = "\n---\n".join([doc.page_content for doc in sources])
@@ -41,3 +42,23 @@ def query():
         status=200,
         mimetype="application/json"
     )
+
+@query_blueprint.route("/history/<session_id>", methods=["GET"])
+def get_history(session_id):
+    try:
+        memory = get_conversation_memory(session_id)
+        messages = memory.chat_memory.messages
+
+        formatted = []
+        for msg in messages:
+            role = "user" if msg.type == "human" else "ai"
+            formatted.append({"role": role, "content": msg.content})
+
+        return jsonify({
+            "session_id": session_id,
+            "total_messages": len(formatted),
+            "history": formatted
+        }), 200
+
+    except Exception as e:
+        return jsonify({"error": f"Erro ao recuperar histórico: {str(e)}"}), 500

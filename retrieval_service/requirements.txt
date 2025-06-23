@@ -6,9 +6,11 @@ joblib
 langchain==0.2.1
 langchain-community==0.2.3
 langchain-openai==0.1.8
-
-# openai==1.33.0
 openai==1.55.3
+
+# 🗄️ Banco de Dados
+redis==5.0.4    
+# openai==1.33.0
 
 qdrant-client==1.8.0
 # 🔍 Utilitários

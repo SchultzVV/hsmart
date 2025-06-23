@@ -2,18 +2,27 @@
 services:
   vector_db:
     image: qdrant/qdrant
-    container_name: vector_db
+    container_name: vector_db-dev
     ports:
       - "6333:6333"
     volumes:
       - ./vector_db:/qdrant/storage
     restart: always
 
+  redis:
+    image: redis:7
+    container_name: redis-dev
+    ports:
+      - "6379:6379"
+    restart: always
+    env_file:
+      - .env
+
   ingestion_service:
     build:
       context: .
       dockerfile: ingestion_service/Dockerfile
-    container_name: ingestion_service
+    container_name: ingestion_service-dev
     ports:
       - "5003:5003"
     depends_on:
@@ -31,7 +40,7 @@ services:
       dockerfile: retrieval_service/Dockerfile
       args:
         HUGGINGFACE_TOKEN: ${HUGGINGFACE_TOKEN}
-    container_name: retrieval_service
+    container_name: retrieval_service-dev
     ports:
       - "5004:5004"
     depends_on:
@@ -42,3 +51,5 @@ services:
     restart: always
     env_file:
       - .env
+
+

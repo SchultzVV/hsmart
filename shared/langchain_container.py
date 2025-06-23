@@ -5,12 +5,15 @@ from langchain_community.vectorstores import Qdrant
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import VectorParams, Distance, PointStruct
 
+from langchain.prompts import PromptTemplate
+
 
 class LangChainContainer:
     def __init__(self):
         self.api_key = os.environ["OPENAI_API_KEY"]
         self.embedding_model_name = os.environ.get("OPENAI_EMBEDDING_MODEL", "text-embedding-3-small")
         self.chat_model_name = os.environ.get("OPENAI_CHAT_MODEL", "gpt-4")
+        self.top_k = int(os.environ.get("TOP_K", 5))  # Número de documentos a retornar
 
         # 🔌 Inicializa cliente Qdrant
         self.qdrant_client = QdrantClient(host="vector_db", port=6333)
@@ -32,6 +35,20 @@ class LangChainContainer:
         self.vectorstore = None
         self.retriever = None
         self.qa_chain = None
+
+        # Prompt para a cadeia de QA
+        # Usado para formatar a pergunta e o contexto
+        self.prompt = PromptTemplate(
+            input_variables=["context", "question"],
+            template="""Use as informações a seguir para responder com precisão.
+
+        Contexto:
+        {context}
+
+        Pergunta:
+        {question}
+        """
+        )
 
     def set_collection(self, collection_name: str):
         existing = [col.name for col in self.qdrant_client.get_collections().collections]
@@ -58,9 +75,20 @@ class LangChainContainer:
 
         self.qa_chain = RetrievalQA.from_chain_type(
             llm=self.chat_model,
-            retriever=self.retriever,
-            return_source_documents=True
+            retriever=self.vectorstore.as_retriever(search_kwargs={"k": self.top_k}),
+            memory=None,  # só será atribuído depois
+            chain_type="stuff",
+            input_key="query",
+            output_key="result",  # 👈 ESSENCIAL
+            chain_type_kwargs={"prompt": self.prompt},
+            return_source_documents=True,
         )
+
+        # self.qa_chain = RetrievalQA.from_chain_type(
+        #     llm=self.chat_model,
+        #     retriever=self.retriever,
+        #     return_source_documents=True
+        # )
 
     def store(self, collection_name, sentences, embeddings, metadata):
         """

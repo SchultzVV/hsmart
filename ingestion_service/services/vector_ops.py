@@ -22,17 +22,32 @@ def list_collections():
     try:
         collections = client.get_collections()
         collection_infos = []
+
         for col in collections.collections:
-            info = client.get_collection(collection_name=col.name)
-            vectors_cfg = info.config.params.vectors
-            collection_infos.append({
-                "name": col.name,
-                "vector_size": vectors_cfg.size,
-                "distance": vectors_cfg.distance
-            })
+            try:
+                info = client.get_collection(collection_name=col.name)
+                vectors_cfg = info.config.params.vectors
+                count_result = client.count(collection_name=col.name, exact=True)
+
+                collection_infos.append({
+                    "name": col.name,
+                    "vector_size": vectors_cfg.size,
+                    "distance": vectors_cfg.distance,
+                    "points_count": count_result.count,
+                    "status": info.status,
+                    "hints": getattr(info, "hints", None)
+                    # 🔁 Removido: "on_disk": info.on_disk
+                })
+            except Exception as inner_err:
+                collection_infos.append({
+                    "name": col.name,
+                    "error": f"❌ Erro ao buscar detalhes: {inner_err}"
+                })
+
         return jsonify({"collections": collection_infos}), 200
+
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": f"Erro ao listar coleções: {e}"}), 500
 # def list_collections():
 #     try:
 #         collections = client.get_collections()

@@ -120,7 +120,23 @@ for chunk in splitter.create_documents([texto], metadatas=[metadados]):
 - Para verificar o conteúdo no Qdrant:
 
 ```python
-container.qdrant_client.scroll(collection_name="ufsm_knowledge", limit=3)
+from shared.langchain_container import LangChainContainer
+
+# 🔌 Inicializa o container (com cliente e modelo embutido)
+container = LangChainContainer()
+
+# 🧠 Inspeciona 3 documentos da coleção 'ufsm_knowledge'
+response = container.qdrant_client.scroll(
+    collection_name="ufsm_knowledge",
+    limit=3
+)
+
+# 📄 Exibe os documentos recuperados
+for i, point in enumerate(response[0], 1):
+    print(f"--- Documento {i} ---")
+    print("ID:", point.id)
+    print("Payload:", point.payload)
+    print()
 ```
 
 ---

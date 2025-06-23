@@ -9,6 +9,15 @@ services:
       - ./vector_db:/qdrant/storage
     restart: always
 
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
+    restart: always
+    env_file:
+      - .env.prd
+
   ingestion_service:
     image: ghcr.io/${GITHUB_USERNAME}/ingestion_service:latest
     container_name: ingestion_service

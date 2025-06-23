@@ -108,6 +108,10 @@ curl -X POST http://localhost:5003/ingest_ufsm2
 curl -X POST http://localhost:5003/reprocess_log
 ```
 
+```bash
+curl -X POST http://localhost:5003/process_faq_json
+```
+
 ---
 
 ### 🌍 5. Ingestão a partir de uma URL web arbitrária
@@ -115,7 +119,7 @@ curl -X POST http://localhost:5003/reprocess_log
 ```bash
 curl -X POST http://localhost:5003/ingest_from_url \
   -H "Content-Type: application/json" \
-  -d '{"url": "https://www.ufsm.br/cursos/graduacao/santa-maria/ciencia-da-computacao/"}'
+  -d '{"url": "https://hotmart.com/pt-br/blog/como-funciona-hotmart"}'
 ```
 
 ---

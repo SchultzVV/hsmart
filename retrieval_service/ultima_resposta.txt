@@ -1,7 +1,25 @@
-Pergunta: voce sabe algo sobre archiv?
+Pergunta: Para o ano de 2025, monte uma tabela em latex das principais datas para os alunos sao quais?
 
 Contexto:
 
 
 Resposta:
-Desculpe, mas não tenho informações sobre "archiv". Você poderia fornecer mais detalhes ou talvez esteja se referindo a "Arquivologia"?
+A tabela em LaTeX das principais datas para os alunos no ano de 2025 seria:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Data} & \textbf{Evento} \\
+\hline
+17 a 22 de fevereiro & Matrícula - Solicitação pelo Portal Estudantil \\
+\hline
+24 a 26 de fevereiro & Matrícula - Ajuste - Solicitação pelo Portal Estudantil \\
+\hline
+07 a 08 de março & Matrícula - Ajuste - Solicitação pelo Portal Estudantil \\
+\hline
+10 a 14 de março & Matrícula - Ajuste - Solicitação pelo Portal Estudantil ou à coordenação do curso \\
+\hline
+\end{tabular}
+\caption{Principais datas para os alunos no ano de 2025}
+\end{table}
