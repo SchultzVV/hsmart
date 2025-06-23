@@ -42,13 +42,15 @@ class IngestionManager:
         try:
             docs, loader_used = self.load_url(url)
         except Exception as e:
+            logger.error(f"❌ Erro ao carregar URL {url}: {e}")
             return {"error": str(e)}, 500
-
+    
         if not docs:
-            return {"error": "❌ No documents extracted."}, 204
-
-        logger.info(f"📄 {len(docs)} documents loaded from {url}")
-
+            return {"error": "❌ Nenhum documento extraído."}, 204
+    
+        logger.info(f"📄 {len(docs)} documentos carregados de {url}")
+        logger.info(f"🔍 Iniciando ingestão na coleção: {self.collection_name}")
+    
         chunks = []
         for doc in docs:
             doc_chunks = self.splitter.split_documents([doc])
@@ -60,19 +62,68 @@ class IngestionManager:
                 })
                 continue
             chunks.extend(doc_chunks)
-
+    
         if not chunks:
-            return {"error": "Todos os documentos foram descartados após chunking."}, 204
+            return {"error": "Todos os documentos foram descartados após o chunking."}, 204
+    
+        try:
+            self.container.set_collection(self.collection_name)
+            vectorstore = self.container.vectorstore
+    
+            if vectorstore is None:
+                raise RuntimeError("Vectorstore não foi inicializado corretamente.")
+    
+            vectorstore.add_documents(chunks)
+            self._save_skipped_log()
+    
+            return {
+                "message": f"{len(chunks)} chunks ingeridos na coleção `{self.collection_name}`.",
+                "loader": loader_used,
+                "skipped": len(self.skipped_docs)
+            }, 200
+    
+        except Exception as e:
+            logger.error(f"❌ Falha ao salvar documentos na coleção `{self.collection_name}`: {e}")
+            return {"error": "Erro ao salvar documentos."}, 500
 
-        self.container.set_collection(self.collection_name)
-        self.vectorstore.add_documents(chunks)
-        self._save_skipped_log()
+    # def ingest_url(self, url):
+    #     try:
+    #         docs, loader_used = self.load_url(url)
+    #     except Exception as e:
+    #         return {"error": str(e)}, 500
 
-        return {
-            "message": f"{len(chunks)} chunks ingeridos na coleção `{self.collection_name}`.",
-            "loader": loader_used,
-            "skipped": len(self.skipped_docs)
-        }, 200
+    #     if not docs:
+    #         return {"error": "❌ No documents extracted."}, 204
+
+    #     logger.info(f"📄 {len(docs)} documents loaded from {url}")
+    #     # self.container.set_collection(self.collection_name)
+    #     logger.info(f"🔍 Ingesting into collection: {self.collection_name}")
+    #     chunks = []
+    #     for doc in docs:
+    #         doc_chunks = self.splitter.split_documents([doc])
+    #         if not doc_chunks or all(len(c.page_content.strip()) < 20 for c in doc_chunks):
+    #             self.skipped_docs.append({
+    #                 "url": url,
+    #                 "reason": "Empty or too short after chunking",
+    #                 "timestamp": datetime.now().isoformat()
+    #             })
+    #             continue
+    #         chunks.extend(doc_chunks)
+
+    #     if not chunks:
+    #         return {"error": "Todos os documentos foram descartados após chunking."}, 204
+
+    #     self.container.set_collection(self.collection_name)
+        
+    #     self.vectorstore.add_documents(chunks)
+        
+    #     self._save_skipped_log()
+
+    #     return {
+    #         "message": f"{len(chunks)} chunks ingeridos na coleção `{self.collection_name}`.",
+    #         "loader": loader_used,
+    #         "skipped": len(self.skipped_docs)
+    #     }, 200
 
     def _save_skipped_log(self):
         if self.skipped_docs:

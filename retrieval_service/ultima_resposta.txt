@@ -1,25 +1,7 @@
-Pergunta: Para o ano de 2025, monte uma tabela em latex das principais datas para os alunos sao quais?
+Pergunta: como que foi o encerramento da guerra de trump?
 
 Contexto:
 
 
 Resposta:
-A tabela em LaTeX das principais datas para os alunos no ano de 2025 seria:
-
-\begin{table}[h]
-\centering
-\begin{tabular}{|c|c|}
-\hline
-\textbf{Data} & \textbf{Evento} \\
-\hline
-17 a 22 de fevereiro & Matrícula - Solicitação pelo Portal Estudantil \\
-\hline
-24 a 26 de fevereiro & Matrícula - Ajuste - Solicitação pelo Portal Estudantil \\
-\hline
-07 a 08 de março & Matrícula - Ajuste - Solicitação pelo Portal Estudantil \\
-\hline
-10 a 14 de março & Matrícula - Ajuste - Solicitação pelo Portal Estudantil ou à coordenação do curso \\
-\hline
-\end{tabular}
-\caption{Principais datas para os alunos no ano de 2025}
-\end{table}
+De acordo com o presidente dos Estados Unidos, Donald Trump, a guerra entre Israel e Irã será encerrada por meio de um cessar-fogo completo. Ele anunciou que o conflito será completamente encerrado dentro de 24 horas. No entanto, até a publicação da reportagem, os governos de Israel e do Irã não haviam confirmado oficialmente o acordo. Trump afirmou que nas próximas horas, os dois países concluirão as operações militares que ainda estão em andamento e, depois disso, os ataques serão suspensos.
