@@ -1,4 +1,5 @@
 import os
+import json
 import requests
 from bs4 import BeautifulSoup
 import xml.etree.ElementTree as ET
@@ -6,20 +7,15 @@ from flask import jsonify
 from urllib.parse import urljoin
 from collections import deque
 # from unidecode import unidecode
-from langchain_community.vectorstores import Qdrant
+# from langchain_community.vectorstores import Qdrant
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from shared.langchain_container import LangChainContainer
+from datetime import datetime
+import logging
 
 container = LangChainContainer()
 client = container.qdrant_client
 embedding_model = container.embedding_model
-
-import json
-import logging
-import xml.etree.ElementTree as ET
-from bs4 import BeautifulSoup
-from datetime import datetime
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from shared.langchain_container import LangChainContainer
 
 logger = logging.getLogger(__name__)
 

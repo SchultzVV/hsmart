@@ -1,7 +1,7 @@
-Pergunta: como que foi o encerramento da guerra de trump?
+Pergunta: qual e a noticia mais recente?
 
 Contexto:
 
 
 Resposta:
-De acordo com o presidente dos Estados Unidos, Donald Trump, a guerra entre Israel e Irã será encerrada por meio de um cessar-fogo completo. Ele anunciou que o conflito será completamente encerrado dentro de 24 horas. No entanto, até a publicação da reportagem, os governos de Israel e do Irã não haviam confirmado oficialmente o acordo. Trump afirmou que nas próximas horas, os dois países concluirão as operações militares que ainda estão em andamento e, depois disso, os ataques serão suspensos.
+A notícia mais recente mencionada no texto é a atualização do valor do Dólar Comercial e do Euro Comercial, atualizado em 23/06/2025 às 17h21.
